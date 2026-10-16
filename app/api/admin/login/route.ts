@@ -18,10 +18,11 @@ export async function POST(req: NextRequest) {
     }
 
     const res = NextResponse.json({ ok: true });
+    const proto = req.headers.get('x-forwarded-proto') ?? req.nextUrl.protocol.replace(':', '');
     res.cookies.set(ADMIN_COOKIE, sessionToken(), {
         httpOnly: true,
         sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
+        secure: proto === 'https',
         path: '/',
         maxAge: ADMIN_MAX_AGE,
     });
