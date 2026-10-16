@@ -98,3 +98,24 @@ model WikiArticle {
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
+
+// ─── Affiliate Banners ────────────────────────────────────────────────────────
+
+model Banner {
+  id         String    @id @default(cuid())
+  position   String    // "top" | "wiki"
+  title      String    @default("")
+  imageUrl   String
+  targetUrl  String    // affiliate link
+  network    String    @default("generic") // shopee | lazada | tiktok | generic
+  alt        String    @default("")
+  active     Boolean   @default(true)
+  sortOrder  Int       @default(0)
+  startsAt   DateTime?
+  endsAt     DateTime?
+  clickCount Int       @default(0)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([position, active])
+}

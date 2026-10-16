@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { BookOpen, FlaskConical, Layers, Zap, ChevronRight } from 'lucide-react';
+import BannerSlot from '../components/BannerSlot';
 
 export default function WikiHub() {
     return (
@@ -16,6 +17,8 @@ export default function WikiHub() {
                     </div>
                 </div>
             </nav>
+
+            <BannerSlot position="top" className="max-w-5xl mx-auto px-4 pt-6" />
 
             <main className="max-w-5xl mx-auto px-4 py-10 space-y-14">
                 {/* Hero */}

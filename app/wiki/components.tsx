@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
+import BannerSlot from '../components/BannerSlot';
 
 export function SectionHeader({ icon, title, subtitle }: { icon: React.ReactNode; title: string; subtitle?: string }) {
     return (
@@ -83,8 +84,10 @@ export function WikiLayout({ title, icon, children }: { title: string; icon: Rea
                     </div>
                 </div>
             </nav>
+            <BannerSlot position="top" className="max-w-5xl mx-auto px-4 pt-6" />
             <main className="max-w-5xl mx-auto px-4 py-10 space-y-10">
                 {children}
+                <BannerSlot position="wiki" />
             </main>
             <footer className="border-t border-slate-800 py-4 mt-20 bg-slate-950 text-center text-xs text-slate-500">
                 <p>Beyblade X Wiki ภาษาไทย • ข้อมูลอิงจาก Takara Tomy Standard และ WBO community</p>

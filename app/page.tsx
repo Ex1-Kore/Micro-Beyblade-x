@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import type { SystemType, BladePart, SubBladePart, RatchetPart, BitPart, Combo, ComboStats, DeckAnalysis } from './lib/types';
 import { PARTS_DB } from './lib/parts-db';
 import AppHeader, { type AppTab } from './components/AppHeader';
+import BannerSlot from './components/BannerSlot';
 import ComboBuilder from './components/ComboBuilder';
 import DeckBuilder from './components/DeckBuilder';
 import BeyCard from './components/BeyCard';
@@ -162,6 +163,8 @@ export default function App() {
     return (
         <div className="min-h-screen bg-[#090d16] text-slate-100 font-sans selection:bg-cyan-500 selection:text-black">
             <AppHeader activeTab={activeTab} onTabChange={setActiveTab} />
+
+            <BannerSlot position="top" className="max-w-7xl mx-auto px-4 md:px-8 pt-6" />
 
             <main className="max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[calc(100vh-200px)]">
 
