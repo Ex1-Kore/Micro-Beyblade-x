@@ -70,6 +70,7 @@ model SavedCombo {
   bladeId     String
   ratchetId   String
   bitId       String
+  subBladeId  String?  // CX เท่านั้น — อ้าง id ของ CX_SUBBLADES (static, ไม่มี relation)
 
   blade       Blade   @relation(fields: [bladeId],   references: [id])
   ratchet     Ratchet @relation(fields: [ratchetId], references: [id])
@@ -90,14 +91,22 @@ model SavedCombo {
 // ─── Wiki Articles ────────────────────────────────────────────────────────────
 
 model WikiArticle {
-  id        String   @id @default(cuid())
-  slug      String   @unique
-  title     String
-  content   String   // Markdown
-  category  String   // physics | parts | strategy | glossary
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  title      String
+  content    String   // Markdown
+  category   String   // mechanics | system | strategy | glossary | how-to-play | general
+  status     String   @default("draft") // draft | published
+  excerpt    String   @default("")
+  coverImage String   @default("") // URL หรือ path สัมพัทธ์ (ว่าง = ไม่มีปก)
+  imageAlt   String   @default("")
+  sortOrder  Int      @default(0)
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+
+  @@index([status, category])
 }
+
 
 // ─── Affiliate Banners ────────────────────────────────────────────────────────
 

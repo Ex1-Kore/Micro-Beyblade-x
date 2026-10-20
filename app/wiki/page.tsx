@@ -1,9 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
-import { BookOpen, FlaskConical, Layers, Zap, ChevronRight } from 'lucide-react';
+import { BookOpen, FlaskConical, Layers, Zap, ChevronRight, FileText } from 'lucide-react';
 import BannerSlot from '../components/BannerSlot';
+import { listPublishedArticles, WIKI_CATEGORY_LABELS, type WikiCategory } from '../lib/wiki';
 
-export default function WikiHub() {
+export const dynamic = 'force-dynamic';
+
+export default async function WikiHub() {
+    const articles = await listPublishedArticles();
     return (
         <div className="min-h-screen bg-[#090d16] text-slate-100 font-sans">
             <nav className="border-b border-slate-800 bg-[#121826]/90 backdrop-blur-md sticky top-0 z-50">
@@ -62,6 +66,46 @@ export default function WikiHub() {
                     </Link>
                 </div>
                 
+                {/* บทความจากคลังความรู้ (CMS published) */}
+                {articles.length > 0 && (
+                    <section className="space-y-5">
+                        <div className="flex items-center gap-3">
+                            <FileText className="w-5 h-5 text-cyan-400" />
+                            <h2 className="text-2xl font-black text-white">บทความทั้งหมด</h2>
+                            <span className="text-xs text-slate-500">({articles.length})</span>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            {articles.map((a) => (
+                                <Link
+                                    key={a.id}
+                                    href={`/wiki/${a.slug}`}
+                                    className="group bg-[#121826] border border-slate-800 rounded-2xl overflow-hidden hover:border-cyan-500/50 transition-all flex flex-col"
+                                >
+                                    {a.coverImage && (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img
+                                            src={a.coverImage}
+                                            alt={a.imageAlt || a.title}
+                                            className="w-full h-40 object-cover border-b border-slate-800"
+                                        />
+                                    )}
+                                    <div className="p-5 space-y-2">
+                                        <span className="inline-block text-[11px] font-bold uppercase tracking-wider text-cyan-400">
+                                            {WIKI_CATEGORY_LABELS[a.category as WikiCategory] ?? a.category}
+                                        </span>
+                                        <h3 className="text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">
+                                            {a.title}
+                                        </h3>
+                                        {a.excerpt && (
+                                            <p className="text-sm text-slate-400 leading-relaxed line-clamp-3">{a.excerpt}</p>
+                                        )}
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
                 {/* Secondary Links */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-slate-800">
                     <Link href="/wiki/products" className="bg-slate-900 border border-slate-800 p-4 rounded-xl hover:bg-slate-800 transition-colors text-center">

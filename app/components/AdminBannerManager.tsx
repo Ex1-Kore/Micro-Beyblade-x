@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 type Banner = {
@@ -193,12 +194,20 @@ export default function AdminBannerManager() {
             <header className="border-b border-slate-800 bg-[#121826]/90 backdrop-blur-md sticky top-0 z-10">
                 <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
                     <h1 className="font-black text-white">จัดการแบนเนอร์ (Affiliate)</h1>
-                    <button
-                        onClick={logout}
-                        className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:border-rose-600 hover:text-rose-400"
-                    >
-                        ออกจากระบบ
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <Link
+                            href="/admin/wiki"
+                            className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:border-cyan-600"
+                        >
+                            บทความ Wiki
+                        </Link>
+                        <button
+                            onClick={logout}
+                            className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:border-rose-600 hover:text-rose-400"
+                        >
+                            ออกจากระบบ
+                        </button>
+                    </div>
                 </div>
             </header>
 
