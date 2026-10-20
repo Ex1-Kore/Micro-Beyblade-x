@@ -3,6 +3,14 @@
         "/^cd /home/neon13/workspace/services/next/beyblade-x && python3 - <<'PY'\nimport re, pathlib\np = pathlib\\.Path\\('app/wiki/blades/page\\.tsx'\\)\\.read_text\\(\\)\nids = re\\.findall\\(r\"\\\\\\{\\\\s\\*id:\\\\s\\*'\\(\\[\\^'\\]\\+\\)'\", p\\)\nprint\\('count', len\\(ids\\)\\)\nprint\\('unique', len\\(set\\(ids\\)\\)\\)\nprint\\('\\\\n'\\.join\\(sorted\\(ids\\)\\)\\)\nPY$/": {
             "approve": true,
             "matchCommandLine": true
+        },
+        "/^node -e 'try \\{ require\\.resolve\\(\"dotenv\"\\); console\\.log\\(\"dotenv_parser=available\"\\) \\} catch \\{ console\\.log\\(\"dotenv_parser=unavailable\"\\) \\}; for \\(const f of \\[\"\\.env\", \"\\.env\\.local\"\\]\\) \\{ const s=require\\(\"fs\"\\)\\.readFileSync\\(f,\"utf8\"\\); for \\(const key of \\[\"ADMIN_PASSWORD\",\"ADMIN_SECRET\",\"DATABASE_URL\"\\]\\) \\{ const m=s\\.match\\(new RegExp\\(\"\\^\"\\+key\\+\"=\\(\\.\\*\\)\\$\",\"m\"\\)\\); if\\(m\\) console\\.log\\(f\\+\":\"\\+key\\+\" format=\"\\+\\(m\\[1\\]\\.startsWith\\(\"\\\\\"\"\\)\\?\"double-quoted\":m\\[1\\]\\.startsWith\\(\"\\\\x27\"\\)\\?\"single-quoted\":\"plain\"\\)\\+\" single-line=\"\\+\\(!m\\[1\\]\\.endsWith\\(\"\\\\\\\\\"\\)\\)\\); \\} \\}'$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^node -e 'const fs=require\\(\"node:fs\"\\);const dotenv=require\\(\"dotenv\"\\);const \\{spawnSync\\}=require\\(\"node:child_process\"\\);const values=dotenv\\.parse\\(fs\\.readFileSync\\(\"\\.env\\.local\"\\)\\);const value=values\\.ADMIN_PASSWORD;if\\(!value\\)\\{console\\.error\\(\"ADMIN_PASSWORD missing or empty\"\\);process\\.exit\\(2\\)\\}const args=\\[\"env\",\"add\",\"ADMIN_PASSWORD\",\"production\",\"--project\",\"prj_IFU4mQXUHF5RfWf4ZBQLqofyI8hc\",\"--scope\",\"20241xxx-8833s-projects\",\"--sensitive\",\"--yes\"\\];const r=spawnSync\\(\"vercel\",args,\\{input:value\\+\"\\\\n\",encoding:\"utf8\",env:process\\.env\\}\\);const out=\\(r\\.stdout\\|\\|\"\"\\)\\+\\(r\\.stderr\\|\\|\"\"\\);console\\.log\\(out\\.split\\(value\\)\\.join\\(\"\\[REDACTED\\]\"\\)\\.trim\\(\\)\\|\\|\"No CLI output\"\\);process\\.exitCode=r\\.status\\?\\?1'$/": {
+            "approve": true,
+            "matchCommandLine": true
         }
     }
 }
