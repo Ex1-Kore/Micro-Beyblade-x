@@ -1,10 +1,13 @@
 /**
- * GET  /api/combos        — ดึง saved combos ทั้งหมด (ล่าสุด 20 รายการ)
- * POST /api/combos        — บันทึก combo ใหม่พร้อม physics snapshot
+ * GET  /api/combos        — ดึง saved combos ทั้งหมด (ล่าสุด 20 รายการ) · สาธารณะ
+ * POST /api/combos        — บันทึก combo ใหม่พร้อม physics snapshot · สาธารณะ
+ *
+ * หมายเหตุ: GET/POST เปิดสาธารณะ เพราะผู้ใช้ทั่วไปต้องกด "บันทึกคอมโบ" ได้
+ * (PhysicsEvaluator → POST /api/combos) โดยไม่ต้อง login admin
+ * การลบ (DELETE) เท่านั้นที่ต้องเป็น admin — ดู app/api/combos/[id]/route.ts
  */
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '../../lib/prisma';
-import { isAdmin } from '../../lib/admin-auth';
 import { PARTS_DB } from '../../lib/parts-db';
 
 const SYSTEMS = ['BX', 'UX', 'CX'] as const;
@@ -34,9 +37,6 @@ function asLimitedString(v: unknown, max: number): string | null {
 
 // ── GET ───────────────────────────────────────────────────────────────────────
 export async function GET() {
-    if (!(await isAdmin())) {
-        return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
-    }
     try {
         const combos = await prisma.savedCombo.findMany({
             orderBy: { createdAt: 'desc' },
@@ -56,9 +56,6 @@ export async function GET() {
 
 // ── POST ──────────────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
-    if (!(await isAdmin())) {
-        return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
-    }
     try {
         let raw: Record<string, unknown>;
         try {

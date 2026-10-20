@@ -101,6 +101,7 @@ node scripts/extract-beybuilder-parts.mjs
 - **TypeScript strict** — ไม่ใช้ `any`, ใส่ return type ให้ exported function, หลีกเลี่ยง `as never` เกินจำเป็น
 - **แก้แค่จุดที่เกี่ยวข้อง** — อย่ารื้อไฟล์ที่ไม่เกี่ยวกับงาน, อ่านโค้ดเดิมก่อนเข้าใจพฤติกรรม
 - หน้า admin ทุกตัวต้องเรียก `isAdmin()` ก่อน (cookie `mbx_admin`)
+- **เก็บ admin เฉพาะจุดที่เป็นการลบ/แก้ไขข้อมูล**: `DELETE /api/combos/[id]`, `/api/seed`, `/api/admin/*` — ส่วน `GET`/`POST /api/combos` **ต้องเปิดสาธารณะ** เพราะผู้ใช้ทั่วไปกด "บันทึกคอมโบ" ผ่าน `PhysicsEvaluator` (ไม่มี cookie admin)
 - ค่า URL ที่จะ render ต้องผ่าน `asSafeUrl()` (`app/lib/safe-url.ts`)
 - payload จากผู้ใช้ต้อง validate ผ่านฟังก์ชันใน `app/lib/*-input.ts` ห้ามเขียน validation ซ้ำ
 - **ไม่มี Python/Flask ในโปรเจกต์นี้** — งานทุกอย่างเป็น TypeScript
