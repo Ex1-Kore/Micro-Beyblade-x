@@ -26,13 +26,14 @@
  *
  *  6) พลังงานและแรงกระแทก (คำนวณจาก CurrentRPM)
  *     E_rot = ½ × I × ω_current²
- *     F_impact = m·v·sin(θ)·(ω_current/100) / Δt
+ *     F_impact = (m·v + L/r)·sin(θ) / Δt   (r = EFFECTIVE_RADIUS_M)
  *
  *  7) ความเสถียร (Stability & Center of Gravity)
  *     Stability = (m × r) / h     (น้ำหนัก * รัศมี / ความสูง)
  *
  *  8) ความเสี่ยง Burst
- *     Risk = (sides × 1.1) + ((h - 60) × 0.05) - (bitBurstResist × 0.8)
+ *     Risk = (sides × 1.1) + ((h×10 - 60) × 0.05) - (bitBurstResist × 0.8)
+ *     โดย h = ratchetHeightMm (มิลลิเมตรจริง) · h×10 คือสเกล mm×10 (เช่น 3-60 → 60)
  * ══════════════════════════════════════════════════════════════
  */
 
@@ -134,8 +135,9 @@ export function calcPhysics(input: PhysicsInput): PhysicsOutput {
     const totalKE = rotationalKE + linearKE;
 
     // ── 5. แรงกระแทก (อิง Current RPM) ────────────────────────────────────────
+    // J = (m·v + L/r)·sinθ  โดย L/r แปลงโมเมนตัมเชิงมุมเป็นโมเมนตัมเชิงเส้นผ่านรัศมี r
     const angleRad = (angleDeg * Math.PI) / 180;
-    const impulse = massKg * linearSpeedMs * Math.sin(angleRad) + (angularMomentum * Math.sin(angleRad)) / 10;
+    const impulse = massKg * linearSpeedMs * Math.sin(angleRad) + (angularMomentum * Math.sin(angleRad)) / r;
     const impactForce = impulse / CONTACT_TIME_S;
 
     // ── 6. เวลาหมุนทั้งหมดโดยประมาณ ──────────────────────────────────────────
@@ -147,7 +149,8 @@ export function calcPhysics(input: PhysicsInput): PhysicsOutput {
     const stabilityScore = (massKg * r) / heightM * 1000;
 
     // ── 8. Burst Risk (บวกความสูงเป็นจุดอ่อน) ──────────────────────────────
-    let burstRiskScore = (ratchetSides * 1.1) + ((ratchetHeightMm - 60) * 0.05) - (bitBurstResist * 0.8);
+    // หมายเหตุ: ratchetHeightMm เป็นมิลลิเมตรจริง (5.0–8.5) แต่สเกลสูตรคือ mm×10 (เช่น 3-60 → 60)
+    let burstRiskScore = (ratchetSides * 1.1) + ((ratchetHeightMm * 10 - 60) * 0.05) - (bitBurstResist * 0.8);
     if (totalWeightG > 65) burstRiskScore -= 0.5;
     burstRiskScore = Math.max(0, burstRiskScore);
 

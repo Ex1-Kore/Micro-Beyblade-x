@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Wind, ShieldAlert, Clock, Save, CheckCircle, Info, ChevronDown, ChevronUp, FlaskConical } from 'lucide-react';
 import type { Combo } from '../lib/types';
-import { calcPhysics } from '../lib/physics';
+import { calcPhysics, MU_BY_TYPE } from '../lib/physics';
 
 interface PhysicsEvaluatorProps {
     currentCombo: Combo;
@@ -121,6 +121,7 @@ export default function PhysicsEvaluator({ currentCombo }: PhysicsEvaluatorProps
                     bladeId:         currentCombo.blade.id,
                     ratchetId:       currentCombo.ratchet.id,
                     bitId:           currentCombo.bit.id,
+                    subBladeId:      currentCombo.subblade?.id ?? null,
                     rpm,
                     linearSpeed,
                     angleDeg,
@@ -251,8 +252,8 @@ export default function PhysicsEvaluator({ currentCombo }: PhysicsEvaluatorProps
 
                 <FormulaBox
                     label="แรงกระแทกประสิทธิผล (Impact Force)"
-                    formula="F = (m·v·sin θ + L·sin θ/10) / Δt"
-                    desc="อิงหลัก Impulse-Momentum Theorem: J = Δp, F = J/Δt โดย Δt ≈ 10ms (contact time) มุมปะทะ θ กำหนดองค์ประกอบแรงตั้งฉาก"
+                    formula="F = (m·v + L/r)·sin θ / Δt"
+                    desc="อิงหลัก Impulse-Momentum Theorem: J = Δp, F = J/Δt โดย Δt ≈ 10ms (contact time) และ r = รัศมีหน้าสัมผัส (EFFECTIVE_RADIUS_M) ใช้แปลงโมเมนตัมเชิงมุม L เป็นโมเมนตัมเชิงเส้น มุมปะทะ θ กำหนดองค์ประกอบแรงตั้งฉาก"
                     value={result.impactForce.toFixed(2)}
                     unit="N"
                     color="text-rose-400"
@@ -279,7 +280,7 @@ export default function PhysicsEvaluator({ currentCombo }: PhysicsEvaluatorProps
                     <div className="text-base font-extrabold text-cyan-400">{result.trajectoryType}</div>
                     <p className="text-xs text-slate-400 leading-relaxed">{result.trajectoryDesc}</p>
                     <div className="text-[11px] text-slate-600 border-t border-slate-800 pt-2">
-                        Bit: <span className="text-slate-400">{currentCombo.bit.name}</span> · μ = {(0.05 + (currentCombo.bit.speed / 1000)).toFixed(3)}
+                        Bit: <span className="text-slate-400">{currentCombo.bit.name}</span> · μ = {(MU_BY_TYPE[currentCombo.bit.type] ?? 0.10).toFixed(3)}
                     </div>
                 </div>
 
@@ -293,7 +294,7 @@ export default function PhysicsEvaluator({ currentCombo }: PhysicsEvaluatorProps
                         Bit resist: <strong className="text-slate-300">{currentCombo.bit.burstResist}</strong>
                     </p>
                     <div className="text-[11px] font-mono text-slate-600 border-t border-slate-800 pt-2">
-                        Risk = {currentCombo.ratchet.sides}×1.1 − {currentCombo.bit.burstResist}×0.8 = <span className={burstColor}>{result.burstRiskScore.toFixed(2)}</span>
+                        Risk = {currentCombo.ratchet.sides}×1.1 + ({currentCombo.ratchet.height}×10−60)×0.05 − {currentCombo.bit.burstResist}×0.8{totalWeight > 65 ? ' − 0.5' : ''} = <span className={burstColor}>{result.burstRiskScore.toFixed(2)}</span>
                     </div>
                 </div>
 

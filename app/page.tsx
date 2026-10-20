@@ -108,7 +108,9 @@ export default function App() {
         else if (stamina > attack + 20 && stamina > defense) primaryType = 'Stamina';
         else if (Math.abs(attack - stamina) < 15 && Math.abs(defense - stamina) < 15) primaryType = 'Balance';
 
-        const overallScore = Math.round((attack + defense + stamina + speed + burstResist + totalWeight) / 5.2);
+        const statAverage = (attack + defense + stamina + speed + burstResist) / 5;
+        const weightBonus = Math.min(6, Math.max(0, (totalWeight - 25) * 0.3));
+        const overallScore = Math.round(Math.min(100, statAverage + weightBonus));
         let tier = 'TIER B';
         if (overallScore >= 88) tier = 'TIER S+';
         else if (overallScore >= 80) tier = 'TIER S';
@@ -140,7 +142,9 @@ export default function App() {
             if (slot.subblade) w += slot.subblade.weight;
             totalDeckWeight += w;
 
-            [slot.blade.name, slot.ratchet.name, slot.bit.id].forEach(part => {
+            const parts = [slot.blade.name, slot.ratchet.name, slot.bit.id];
+            if (slot.subblade) parts.push(slot.subblade.id);
+            parts.forEach(part => {
                 if (usedParts.includes(part)) hasDuplicates = true;
                 else usedParts.push(part);
             });
