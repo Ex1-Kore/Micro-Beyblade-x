@@ -5,8 +5,12 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../lib/prisma';
 import { PARTS_DB } from '../../lib/parts-db';
+import { isAdmin } from '../../lib/admin-auth';
 
 export async function POST() {
+    if (!(await isAdmin())) {
+        return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
+    }
     try {
         // upsert blades
         const allBlades = [

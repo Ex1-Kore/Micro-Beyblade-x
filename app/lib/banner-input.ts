@@ -1,4 +1,5 @@
 import { BANNER_POSITIONS, type BannerPosition } from './banners';
+import { asSafeUrl } from './safe-url';
 
 export type BannerInput = {
     position: BannerPosition;
@@ -42,14 +43,14 @@ export function normalizeBannerInput(
     }
 
     if (!partial || 'imageUrl' in body) {
-        const imageUrl = asString(body.imageUrl);
-        if (!imageUrl) return { ok: false, error: 'ต้องระบุ imageUrl' };
+        const imageUrl = asSafeUrl(body.imageUrl);
+        if (!imageUrl) return { ok: false, error: 'imageUrl ต้องเป็น http(s) หรือ path สัมพัทธ์' };
         out.imageUrl = imageUrl;
     }
 
     if (!partial || 'targetUrl' in body) {
-        const targetUrl = asString(body.targetUrl);
-        if (!targetUrl) return { ok: false, error: 'ต้องระบุ targetUrl' };
+        const targetUrl = asSafeUrl(body.targetUrl);
+        if (!targetUrl) return { ok: false, error: 'targetUrl ต้องเป็น http(s) หรือ path สัมพัทธ์' };
         out.targetUrl = targetUrl;
     }
 
