@@ -60,6 +60,47 @@ curl "http://192.168.1.200:8000/api/v1/applications/4620e0iufu33l7rf9kvm8f8x" \
 
 **วิธีทางเลือก (ไม่ต้องใช้ API):** เปิด `http://192.168.1.200:8000` → Projects → Micro-Beyblade-x → `micro-beyblade-x` → ปุ่ม **Deploy**
 
+### 3.1 ⚠️ push แล้ว auto-deploy ไม่ทำงาน (ยืนยัน 2026-10-20)
+
+`application_settings.is_auto_deploy_enabled = true` แต่ **push ไป Gitea แล้วไม่มี deployment เกิดขึ้น** — เพราะไม่มี webhook ของ Gitea ที่ชี้มาหา Coolify (หลังลง OS ใหม่ webhook ใน Gitea หายไป)
+
+**ต้องสั่ง deploy เองทุกครั้ง** — ใช้วิธีไหนก็ได้:
+
+**วิธีที่ไม่ต้องมี API token (ทำงานจริง 2026-10-20) — เรียกโค้ดเดียวกับปุ่ม Deploy ใน UI:**
+
+```bash
+docker exec coolify php artisan tinker --execute="
+\$app = \App\Models\Application::where('uuid','4620e0iufu33l7rf9kvm8f8x')->first();
+if (!\$app) { echo 'APP NOT FOUND'; exit(1); }
+echo 'app: '.\$app->name.' | status: '.\$app->status.PHP_EOL;
+\$id = new_public_id();
+\$r = queue_application_deployment(application: \$app, deployment_uuid: \$id, force_rebuild: false, is_api: true, no_questions_asked: true);
+echo 'deployment_uuid: '.\$id.PHP_EOL;
+echo 'result: '.json_encode(\$r).PHP_EOL;
+"
+# → result: {"status":"queued","message":"Deployment queued."}
+```
+
+**วิธี API (ต้องมี token)** — ดูหัวข้อ 4
+
+### 3.2 ติดตามสถานะ deploy
+
+```bash
+# คิว (id เพิ่มขึ้นทุกครั้งที่ deploy)
+docker exec coolify-db psql -U coolify -d coolify -At -c \
+  "select id||' | '||status||' | app='||coalesce(application_id::text,'-')||' | commit='||coalesce(commit,'-') from application_deployment_queues order by id desc limit 3;"
+
+# container ของแอป (ชื่อ = <uuid>-<timestamp>)
+docker ps -a --format '{{.Names}}|{{.Status}}' | grep 4620e0
+
+# log ของ build (อยู่ในคอลัมน์ logs ของคิว — JSON ยาว)
+docker exec coolify-db psql -U coolify -d coolify -At -c \
+  "select logs from application_deployment_queues where id=<queue_id>;" | tail -c 3000
+```
+
+> build nixpacks ใช้เวลา ~2–4 นาที (ดาวน์โหลด node/pnpm จาก cache.nixos.org ครั้งแรกจะนานกว่า)
+> ระหว่าง build จะเห็นขั้นตอน `pnpm i --frozen-lockfile` → `prisma generate` → `next build` → `exporting to image`
+
 ## 4. การหา/สร้าง API token
 
 - สร้างที่ `http://192.168.1.200:8000` → **Keys & Tokens → API Tokens** → ตั้งชื่อ (เช่น `opencode-deploy`) → copy ค่า **ครั้งเดียว**
@@ -77,6 +118,10 @@ curl "http://192.168.1.200:8000/api/v1/applications/4620e0iufu33l7rf9kvm8f8x" \
 | เข้า admin ไม่ได้ | cookie `secure` ตั้งตาม https แต่เสิร์ฟผ่าน http | ใช้ `x-forwarded-proto` (แก้แล้วใน `app/api/admin/login/route.ts`) |
 | API ตอบ 403 | self-hosted Coolify ปิด API access | Settings → Advanced → API and MCP → **API access = Enabled** (+ Allowed API IPs ถ้าตั้ง) |
 | API ตอบ 401 | ไม่มี/หมดอายุ token | สร้าง token ใหม่ที่ Keys & Tokens |
+| **push แล้วไม่ deploy** | ไม่มี Gitea webhook ชี้มาหา Coolify (หายตอนลง OS ใหม่) | สั่ง deploy เอง — ดูหัวข้อ 3.1 |
+| **DB ว่างเปล่าหลัง rebuild เครื่อง** | volume `/app/data` ถูกสร้างใหม่ → ข้อมูลเก่า (บทความวิกิ, banner) หาย | seed ใหม่: `POST /api/seed` (admin) — ชิ้นส่วนกลับมาทั้งหมด แต่บทความ/banner ต้องใส่ใหม่ |
+| **"Part not found — seed the DB first"** | ยังไม่ได้ seed หลัง migrate | login admin → `POST /api/seed` |
+| local `.env` ชี้ path เก่า | เคยอยู่ `/home/devg/Ex1-Kore/...` | แก้ `DATABASE_URL="file:/mnt/backup/GIT/Ex1-Kore/Micro-Beyblade-x/prisma/dev.db"` (ไฟล์ `.env` ไม่ได้ track) |
 
 ## 6. ตรวจสอบหลัง deploy (ต้องทำทุกครั้ง)
 
@@ -95,7 +140,8 @@ docker exec coolify-db psql -U coolify -d coolify -At -c \
 docker logs <container-name> --tail 100
 ```
 
-> **สถานะ ณ 2026-10-20:** app row ยังอยู่ใน Coolify แต่ **container ไม่ได้รันอยู่** และ URL ตอบ `404` → ต้องสั่ง deploy ใหม่ (ขั้นตอนข้อ 3) แล้วตรวจซ้ำ
+> **สถานะ ณ 2026-10-20 (หลัง deploy สำเร็จ):** container `4620e0iufu33l7rf9kvm8f8x-20261020T144349` รันอยู่ · URL ตอบ `200` · seed parts แล้ว (65 blades / 37 ratchets / 54 bits) · DB ใน volume `/app/data/dev.db`
+> แต่ **บทความวิกิและ banner เดิมหายไป** เพราะ volume ถูกสร้างใหม่ตอนลง OS ใหม่ → ต้องใส่เนื้อหาใหม่ผ่าน `/admin/wiki` และ `/admin/banners`
 
 ## 7. ถ้าต้องแก้ค่า app ใน Coolify
 

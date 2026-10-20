@@ -135,17 +135,18 @@ pnpm exec tsc --noEmit && pnpm lint
 | `gitea` | `http://192.168.1.200:3000/Ex1-Kore/Micro-Beyblade-x.git` | **Coolify deploy ดึงจาก remote นี้** |
 | `origin` | `https://github.com/Insurgent-Dev/Micro-Beyblade-x.git` | ของทีม — ให้ผู้ใช้ push เอง |
 
-- branch: `main` · HEAD ล่าสุด: `a9b8a21` (chore: exclude @supabase/* from minimumReleaseAge)
+- branch: `main` · HEAD ล่าสุด: `b7ead78` (chore: untrack prisma/dev.db + เพิ่มโน้ตวิจัย)
 - โปรเจกต์นี้เป็น **repo ของทีมเอง** — กฎ global ข้อ #4 (ห้าม push เอง) ใช้กับ `origin` เท่านั้น
-- ก่อน deploy ต้อง `git push gitea main` เสมอ
+- ก่อน deploy ต้อง `git push gitea main` และ **สั่ง deploy เองด้วย** (auto-deploy ไม่ทำงาน — ไม่มี Gitea webhook) → ดู skill `coolify-deploy`
+- `prisma/dev.db` ไม่ได้ track แล้ว (อยู่ใน `.gitignore`) — local ใช้ `DATABASE_URL="file:/mnt/backup/GIT/Ex1-Kore/Micro-Beyblade-x/prisma/dev.db"` ใน `.env`
 
 ## 10. สถานะงานที่ค้างอยู่ (2026-10-20)
 
 - **รูปเบลด 404 บางส่วน** — โค้ดเรียก `/blade/<series>/<img>.png` แต่ไฟล์จริงชื่อ `BL-PRD-*.png`; ใน `parts-db.ts` มี `img: null` 15 รายการ และ `app/lib/products.ts` อ้าง path ที่ไม่มีจริงบางรายการ
-- **งาน wiki admin ยังไม่ commit** — `app/admin/wiki/`, `app/api/admin/wiki/`, `app/components/AdminWikiManager.tsx`, `app/lib/wiki*.ts`, `app/lib/safe-url.ts`, `app/wiki/[slug]/page.tsx`, `app/wiki/markdown.tsx` + migration 2 ตัว
-- **Coolify: container ของแอปไม่ได้รันอยู่** → `http://micro-beyblade-x.192.168.1.200.sslip.io` ตอบ 404 → ต้อง deploy ใหม่ (ดู skill `coolify-deploy`)
+- **บทความวิกิ + banner ใน production หายหายไป** — volume `/app/data` ถูกสร้างใหม่ตอนลง OS ใหม่ 18 ต.ค. (ชิ้นส่วนกลับมาแล้วหลัง seed) → ต้องใส่เนื้อหาใหม่ที่ `/admin/wiki` และ `/admin/banners`
 - **ชิ้นส่วนที่ยังไม่เพิ่ม** (ต้องมีสถิติเกมจริง ห้ามเดา): DranStrike BX-49, HeavensRing BX-50, LusterDragoon BX-52, GloryValkyrie UX-20, HellsNether UX-21
 - **DB migration ไป Supabase** — เตรียมไว้แล้วแต่ยังไม่ active (ดู skill `supabase-migration`)
+- **ยังไม่ push ไป `origin` / `ex1kore`** (GitHub) — รอผู้ใช้สั่ง
 
 ## 11. Agent Skills ของโปรเจกต์ (`.opencode/skills/`)
 
