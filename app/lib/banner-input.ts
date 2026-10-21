@@ -1,4 +1,4 @@
-import { BANNER_POSITIONS, type BannerPosition } from './banners';
+import { BANNER_POSITIONS, BANNER_NETWORKS, type BannerPosition, type BannerNetwork } from './banners';
 import { asSafeUrl } from './safe-url';
 
 export type BannerInput = {
@@ -6,7 +6,7 @@ export type BannerInput = {
     title: string;
     imageUrl: string;
     targetUrl: string;
-    network: string;
+    network: BannerNetwork;
     alt: string;
     active: boolean;
     sortOrder: number;
@@ -56,7 +56,13 @@ export function normalizeBannerInput(
 
     if (!partial || 'title' in body) out.title = asString(body.title);
     if (!partial || 'alt' in body) out.alt = asString(body.alt);
-    if (!partial || 'network' in body) out.network = asString(body.network, 'generic') || 'generic';
+    if (!partial || 'network' in body) {
+        const network = asString(body.network, 'generic') || 'generic';
+        if (!BANNER_NETWORKS.includes(network as BannerNetwork)) {
+            return { ok: false, error: `network ต้องเป็นหนึ่งใน ${BANNER_NETWORKS.join(' / ')}` };
+        }
+        out.network = network as BannerNetwork;
+    }
     if (!partial || 'active' in body) out.active = body.active === undefined ? true : Boolean(body.active);
     if (!partial || 'sortOrder' in body) {
         const n = Number(body.sortOrder);

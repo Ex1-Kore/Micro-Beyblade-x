@@ -3,7 +3,7 @@
  * (public — ใช้โดย BannerSlot ฝั่ง client)
  */
 import { NextRequest, NextResponse } from 'next/server';
-import { getActiveBanners, BANNER_POSITIONS, type BannerPosition } from '../../lib/banners';
+import { getActiveBanners, BANNER_POSITIONS, BANNER_NETWORKS, type BannerPosition, type BannerNetwork } from '../../lib/banners';
 
 export async function GET(req: NextRequest) {
     const raw = req.nextUrl.searchParams.get('position') ?? 'top';
@@ -11,8 +11,16 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ ok: false, error: 'invalid position' }, { status: 400 });
     }
 
+    const rawNetwork = req.nextUrl.searchParams.get('network');
+    if (rawNetwork !== null && !BANNER_NETWORKS.includes(rawNetwork as BannerNetwork)) {
+        return NextResponse.json({ ok: false, error: 'invalid network' }, { status: 400 });
+    }
+
     try {
-        const banners = await getActiveBanners(raw as BannerPosition);
+        const banners = await getActiveBanners(
+            raw as BannerPosition,
+            rawNetwork ? (rawNetwork as BannerNetwork) : undefined,
+        );
         const data = banners.map((b) => ({
             id: b.id,
             title: b.title,

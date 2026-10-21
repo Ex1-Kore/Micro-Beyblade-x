@@ -36,6 +36,36 @@ const EMPTY = {
 
 type FormState = typeof EMPTY;
 
+const NETWORK_LABEL: Record<string, string> = {
+    shopee: 'Shopee',
+    lazada: 'Lazada',
+    tiktok: 'TikTok Shop',
+    generic: 'สปอนเซอร์',
+};
+
+type ScheduleStatus = 'visible' | 'scheduled' | 'expired' | 'inactive';
+
+const STATUS_BADGE: Record<ScheduleStatus, { label: string; cls: string }> = {
+    visible: { label: '● แสดงอยู่', cls: 'text-emerald-400' },
+    scheduled: { label: '◷ รอเริ่ม', cls: 'text-amber-400' },
+    expired: { label: '✕ หมดเวลา', cls: 'text-rose-400' },
+    inactive: { label: '○ ปิดใช้งาน', cls: 'text-slate-500' },
+};
+
+function scheduleStatus(b: Banner, now: Date): ScheduleStatus {
+    if (!b.active) return 'inactive';
+    if (b.startsAt && new Date(b.startsAt) > now) return 'scheduled';
+    if (b.endsAt && new Date(b.endsAt) < now) return 'expired';
+    return 'visible';
+}
+
+function formatDateTime(iso: string | null): string {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return '';
+    return d.toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+}
+
 function toLocalInput(iso: string | null): string {
     if (!iso) return '';
     const d = new Date(iso);
@@ -56,7 +86,27 @@ export default function AdminBannerManager() {
     const isEditing = useMemo(() => Boolean(form.id), [form.id]);
 
     const [reloadKey, setReloadKey] = useState(0);
-    const reload = useCallback(() => setReloadKey((k) => k + 1), []);
+    const [now, setNow] = useState(() => new Date());
+    const reload = useCallback(() => {
+        setNow(new Date());
+        setReloadKey((k) => k + 1);
+    }, []);
+
+    const [filterPosition, setFilterPosition] = useState<'all' | 'top' | 'wiki'>('all');
+    const [filterNetwork, setFilterNetwork] = useState('all');
+    const [filterStatus, setFilterStatus] = useState<'all' | ScheduleStatus>('all');
+
+    // สถานะ schedule คำนวณ ณ "now" ล่าสุด (อัปเดตทุกครั้งที่ reload)
+    const filtered = useMemo(
+        () =>
+            banners.filter((b) => {
+                if (filterPosition !== 'all' && b.position !== filterPosition) return false;
+                if (filterNetwork !== 'all' && b.network !== filterNetwork) return false;
+                if (filterStatus !== 'all' && scheduleStatus(b, now) !== filterStatus) return false;
+                return true;
+            }),
+        [banners, filterPosition, filterNetwork, filterStatus, now],
+    );
 
     useEffect(() => {
         let cancelled = false;
@@ -324,60 +374,124 @@ export default function AdminBannerManager() {
                 </form>
 
                 <section className="space-y-3">
-                    <h2 className="font-bold text-white">รายการแบนเนอร์ ({banners.length})</h2>
+                    <h2 className="font-bold text-white">
+                        รายการแบนเนอร์ ({filtered.length}
+                        {filtered.length !== banners.length ? ` / ${banners.length}` : ''})
+                    </h2>
+
+                    <div className="grid gap-3 rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:grid-cols-3">
+                        <div>
+                            <label className={labelCls}>ตำแหน่ง</label>
+                            <select
+                                className={inputCls}
+                                value={filterPosition}
+                                onChange={(e) => setFilterPosition(e.target.value as 'all' | 'top' | 'wiki')}
+                            >
+                                <option value="all">ทุกตำแหน่ง</option>
+                                <option value="top">top</option>
+                                <option value="wiki">wiki</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className={labelCls}>เครือข่าย</label>
+                            <select
+                                className={inputCls}
+                                value={filterNetwork}
+                                onChange={(e) => setFilterNetwork(e.target.value)}
+                            >
+                                <option value="all">ทุกเครือข่าย</option>
+                                <option value="shopee">Shopee</option>
+                                <option value="lazada">Lazada</option>
+                                <option value="tiktok">TikTok Shop</option>
+                                <option value="generic">อื่น ๆ / สปอนเซอร์</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className={labelCls}>สถานะ</label>
+                            <select
+                                className={inputCls}
+                                value={filterStatus}
+                                onChange={(e) => setFilterStatus(e.target.value as 'all' | ScheduleStatus)}
+                            >
+                                <option value="all">ทุกสถานะ</option>
+                                <option value="visible">แสดงอยู่</option>
+                                <option value="scheduled">รอเริ่ม</option>
+                                <option value="expired">หมดเวลา</option>
+                                <option value="inactive">ปิดใช้งาน</option>
+                            </select>
+                        </div>
+                    </div>
+
                     {loading ? (
                         <p className="text-sm text-slate-400">กำลังโหลด…</p>
-                    ) : banners.length === 0 ? (
-                        <p className="text-sm text-slate-400">ยังไม่มีแบนเนอร์</p>
+                    ) : filtered.length === 0 ? (
+                        <p className="text-sm text-slate-400">
+                            {banners.length === 0 ? 'ยังไม่มีแบนเนอร์' : 'ไม่มีแบนเนอร์ที่ตรงกับ filter'}
+                        </p>
                     ) : (
                         <div className="space-y-3">
-                            {banners.map((b) => (
-                                <div
-                                    key={b.id}
-                                    className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:flex-row sm:items-center"
-                                >
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
-                                        src={b.imageUrl}
-                                        alt={b.alt || b.title}
-                                        className="h-16 w-28 shrink-0 rounded-lg border border-slate-700 object-cover"
-                                    />
-                                    <div className="min-w-0 flex-1">
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <span className="rounded bg-slate-800 px-2 py-0.5 font-mono text-xs text-cyan-300">
-                                                {b.position}
-                                            </span>
-                                            <span className="text-slate-400">{b.network}</span>
-                                            <span className={b.active ? 'text-emerald-400' : 'text-slate-500'}>
-                                                {b.active ? '● active' : '○ ปิด'}
-                                            </span>
+                            {filtered.map((b) => {
+                                const status = scheduleStatus(b, now);
+                                return (
+                                    <div
+                                        key={b.id}
+                                        className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:flex-row sm:items-center"
+                                    >
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                            src={b.imageUrl}
+                                            alt={b.alt || b.title}
+                                            className="h-16 w-28 shrink-0 rounded-lg border border-slate-700 object-cover"
+                                        />
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex flex-wrap items-center gap-2 text-sm">
+                                                <span className="rounded bg-slate-800 px-2 py-0.5 font-mono text-xs text-cyan-300">
+                                                    {b.position}
+                                                </span>
+                                                <span className="rounded bg-slate-800 px-2 py-0.5 text-xs text-slate-300">
+                                                    {NETWORK_LABEL[b.network] ?? b.network}
+                                                </span>
+                                                <span className={STATUS_BADGE[status].cls}>
+                                                    {STATUS_BADGE[status].label}
+                                                </span>
+                                            </div>
+                                            <p className="truncate text-sm text-white">{b.title || '(ไม่มีชื่อ)'}</p>
+                                            <p className="truncate text-xs text-slate-500">{b.targetUrl}</p>
+                                            <p className="text-xs text-slate-500">
+                                                คลิก: {b.clickCount}
+                                                {(b.startsAt || b.endsAt) && (
+                                                    <span>
+                                                        {' · '}
+                                                        {b.startsAt ? `เริ่ม ${formatDateTime(b.startsAt)}` : 'เริ่มทันที'}
+                                                        {' → '}
+                                                        {b.endsAt ? `จบ ${formatDateTime(b.endsAt)}` : 'ไม่มีกำหนด'}
+                                                    </span>
+                                                )}
+                                            </p>
                                         </div>
-                                        <p className="truncate text-sm text-white">{b.title || '(ไม่มีชื่อ)'}</p>
-                                        <p className="truncate text-xs text-slate-500">{b.targetUrl}</p>
-                                        <p className="text-xs text-slate-500">คลิก: {b.clickCount}</p>
+                                        <div className="flex shrink-0 gap-2">
+                                            <button
+                                                onClick={() => toggleActive(b)}
+                                                className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:border-cyan-600"
+                                            >
+                                                {b.active ? 'ปิด' : 'เปิด'}
+                                            </button>
+                                            <button
+                                                onClick={() => edit(b)}
+                                                className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:border-cyan-600"
+                                            >
+                                                แก้ไข
+                                            </button>
+                                            <button
+                                                onClick={() => remove(b.id)}
+                                                className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:border-rose-600 hover:text-rose-400"
+                                            >
+                                                ลบ
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="flex shrink-0 gap-2">
-                                        <button
-                                            onClick={() => toggleActive(b)}
-                                            className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:border-cyan-600"
-                                        >
-                                            {b.active ? 'ปิด' : 'เปิด'}
-                                        </button>
-                                        <button
-                                            onClick={() => edit(b)}
-                                            className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:border-cyan-600"
-                                        >
-                                            แก้ไข
-                                        </button>
-                                        <button
-                                            onClick={() => remove(b.id)}
-                                            className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:border-rose-600 hover:text-rose-400"
-                                        >
-                                            ลบ
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </section>
