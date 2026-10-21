@@ -8,6 +8,11 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 กฎถาวรสำหรับ Agent ที่ทำงานกับโปรเจกต์นี้ — อ่านก่อนแก้โค้ดทุกครั้ง
 
+## 0. บริบทการสนทนาในโปรเจกต์นี้
+
+- ในโปรเจกต์นี้ Agent (ผู้ช่วย) ชื่อ **x**
+- ถ้าผู้ใช้พิมพ์ **"x"** = เรียก x เพื่อสนทนาเรื่อง **Beyblade** (ไม่ใช่คำสั่งโค้ด)
+
 ## 1. ภาพรวมโปรเจกต์
 
 - **ชื่อ:** Micro-Beyblade-x · package name `beyblade-x` (private)
@@ -152,6 +157,7 @@ pnpm exec tsc --noEmit && pnpm lint
 
 | Skill | ใช้ทำอะไร |
 | --- | --- |
+| `beyblade-knowledge` | ความรู้เบย์เบลดสำหรับสนทนา (กติกา/ชิ้นส่วน/ฟิสิกส์/กลยุทธ์) — ใช้ตอนผู้ใช้พิมพ์ "x" คุยเรื่อง beyblade |
 | `beyblade-project-overview` | โครงสร้างระบบ, schema, ชุดข้อมูลชิ้นส่วน, เส้นทาง API — โหลดก่อนแก้สถาปัตยกรรม |
 | `parts-data-sync` | เพิ่ม/แก้ชิ้นส่วนใน `parts-db.ts` + กฎจับคู่รูป |
 | `wiki-content` | สร้าง/แก้บทความวิกิ (slug, category, API, Markdown) |

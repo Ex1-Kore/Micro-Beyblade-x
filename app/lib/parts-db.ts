@@ -75,6 +75,11 @@ const CX_BLADES: BladePart[] = [
     { id: 'DranBrave',   name: 'Dran Brave',   weight: 28.5, atk: 88, def: 40, sta: 35, series: 'CX', inertiaFactor: 1.28, img: null, desc: 'ระบบ CX ถอดสลับ Sub-Blade ได้ โจมตีสูง', color: 'from-cyan-600 to-blue-700' },
     { id: 'WizardArc',   name: 'Wizard Arc',   weight: 26.8, atk: 40, def: 75, sta: 85, series: 'CX', inertiaFactor: 1.26, img: null, desc: 'กระจายน้ำหนักแบบ Custom หมุนนานมาก',       color: 'from-yellow-400 to-amber-600' },
     { id: 'HellsReaper', name: 'Hells Reaper', weight: 29.1, atk: 72, def: 55, sta: 55, series: 'CX', inertiaFactor: 1.20, img: null, desc: 'เคียวมรณะ CX สมดุลทุกด้าน',                color: 'from-red-800 to-gray-900' },
+    { id: 'PegasusBlast', name: 'Pegasus Blast', weight: 32.76, atk: 0, def: 0, sta: 0, series: 'CX', inertiaFactor: 1.24, img: null, desc: 'ระเบิดพลัง พุ่งชนรุนแรง Attack สูงสุด (CX-07) — ⚠️ ยังไม่มีสถิติ ATK/DEF/STA ตรวจสอบ', color: 'from-sky-500 to-indigo-700' },
+    { id: 'PerseusDark', name: 'Perseus Dark', weight: 30.5, atk: 0, def: 0, sta: 0, series: 'CX', inertiaFactor: 1.22, img: null, desc: 'มืดทึบ ป้องกันสูง รับแรงได้ดี (CX-03) — ⚠️ ยังไม่มีสถิติ ATK/DEF/STA ตรวจสอบ', color: 'from-slate-700 to-violet-900' },
+    { id: 'CerberusFlame', name: 'Cerberus Flame', weight: 28.47, atk: 0, def: 0, sta: 0, series: 'CX', inertiaFactor: 1.20, img: null, desc: 'เปลวไฟ Balance ยืดหยุ่น (CX-08) — ⚠️ ยังไม่มีสถิติ ATK/DEF/STA ตรวจสอบ', color: 'from-orange-600 to-red-800' },
+    { id: 'WhaleFlame', name: 'Whale Flame', weight: 28.47, atk: 0, def: 0, sta: 0, series: 'CX', inertiaFactor: 1.20, img: null, desc: 'เปลวไฟ Balance ยืดหยุ่น (CX-08 variant) — ⚠️ ยังไม่มีสถิติ ATK/DEF/STA ตรวจสอบ', color: 'from-blue-500 to-cyan-700' },
+    { id: 'ValkyrieVolt', name: 'Valkyrie Volt', weight: 31.0, atk: 0, def: 0, sta: 0, series: 'CX', inertiaFactor: 1.26, img: null, desc: 'Main Blade ไฟฟ้า โจมตีเร็ว แรงกระแทกสูง (CX-00) — ⚠️ ยังไม่มีสถิติ ATK/DEF/STA ตรวจสอบ', color: 'from-yellow-400 to-blue-600' },
 ];
 
 // ─── Sub-Blades (CX only) ─────────────────────────────────────────────────────

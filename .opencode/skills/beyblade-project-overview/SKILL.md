@@ -1,6 +1,6 @@
 ---
 name: beyblade-project-overview
-description: โครงสร้างและสถาปัตยกรรมของโปรเจกต์ Micro-Beyblade-x (Next.js 16 + React 19 + Prisma 7/SQLite) — โครงสร้างโฟลเดอร์, schema ฐานข้อมูล, ชุดข้อมูลชิ้นส่วน, เส้นทาง API, ระบบ admin และกฎการ deploy. ใช้เมื่อต้องเข้าใจระบบก่อนแก้สถาปัตยกรรม, เพิ่มฟีเจอร์, แก้ schema, หรือทำงานที่กระทบหลายโฟลเดอร์.
+description: โครงสร้างและสถาปัตยกรรมของโปรเจกต์ Micro-Beyblade-x (Next.js 16 + React 19 + Prisma 7/SQLite) — โครงสร้างโฟลเดอร์, schema ฐานข้อมูล, ชุดข้อมูลชิ้นส่วน, เส้นทาง API, ระบบ admin และกฎการ deploy. ใช้เมื่อต้องเข้าใจระบบก่อนแก้สถาปัตยกรรม, เพิ่มฟีเจอร์, แก้ schema, หรือทำงานที่กระทบหลายโฟลเดอร์. (ถ้าผู้ใช้มาคุยเรื่องเบย์เบลด/กติกา/คอมโบ ไม่ใช่แก้โค้ด → ใช้ skill beyblade-knowledge แทน)
 compatibility: Next.js 16 App Router, pnpm, Node 22, Prisma 7 + libSQL
 metadata:
   project: micro-beyblade-x
@@ -74,6 +74,7 @@ Micro-Beyblade-x/
 │   └── data/beybuilder-parts.json  # ข้อมูลอ้างอิงจาก BeyBuilderX (GPL-2.0)
 ├── scripts/extract-beybuilder-parts.mjs
 ├── .opencode/skills/             # Agent Skills ของโปรเจกต์ (V2 มาตรฐาน)
+│   ├── beyblade-knowledge/SKILL.md        ← ความรู้เบย์เบลดสำหรับสนทนา
 │   ├── beyblade-project-overview/SKILL.md   ← ไฟล์นี้
 │   ├── parts-data-sync/SKILL.md
 │   ├── wiki-content/SKILL.md
@@ -156,6 +157,7 @@ node scripts/extract-beybuilder-parts.mjs   # สร้าง public/data/beybui
 
 | Skill | ใช้ทำอะไร |
 | --- | --- |
+| `beyblade-knowledge` | ความรู้เบย์เบลดสำหรับสนทนา (กติกา, ชิ้นส่วนเด่น, ฟิสิกส์, กลยุทธ์) — ใช้ตอนผู้ใช้คุยเรื่อง beyblade |
 | `parts-data-sync` | เพิ่ม/แก้ชิ้นส่วนใน `parts-db.ts` + จับคู่รูป |
 | `wiki-content` | สร้าง/แก้บทความวิกิ + admin UI + slug/category rules |
 | `coolify-deploy` | deploy/redeploy บน Coolify (uuid, nixpacks, volume, gotchas) |
