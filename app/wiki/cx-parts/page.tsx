@@ -22,6 +22,7 @@ const ASSIST_BLADES = [
     { code: 'CX-01', name: 'Slash',    effect: '+ATK',      desc: 'เพิ่มพลังโจมตี ขอบคมแหลม กวาดคู่แข่งออกสนาม' },
     { code: 'CX-02', name: 'Round',    effect: '+DEF/STA',  desc: 'ขอบกลม ซับแรงชน เพิ่มป้องกันและ Stamina' },
     { code: 'CX-03', name: 'Bumper',   effect: '+DEF',      desc: 'กันชน ดูดซับแรงกระแทก ป้องกันสูงมาก' },
+    { code: 'Break', name: 'Break',    effect: '+ATK',      desc: 'แตกหัก เพิ่มแรงปะทะจากมุมบน' },
     { code: 'CX-05-01', name: 'Turn',  effect: '+Balance',  desc: 'หมุนปรับทิศทาง เพิ่มความยืดหยุ่น Balance' },
     { code: 'CX-05-02', name: 'Charge',effect: '+ATK/SPD',  desc: 'ชาร์จพลัง เพิ่มความเร็วโจมตีช่วงสั้น' },
     { code: 'CX-06', name: 'Jaggy',    effect: '+ATK',      desc: 'ขอบหยักๆ เพิ่มแรงกระทบและ X-Dash' },
@@ -32,6 +33,19 @@ const ASSIST_BLADES = [
     { code: 'CX-11', name: 'Heavy',    effect: '+DEF/ATK',  desc: 'หนักพิเศษ เพิ่มมวลรวม ป้องกันและโจมตีสูงขึ้น' },
     { code: 'CX-13', name: 'Knuckle',  effect: '+ATK',      desc: 'กำปั้น ชนตรงจุด — Infinity Series' },
     { code: 'CX-14', name: 'Vertical', effect: '+DEF',      desc: 'แนวตั้ง ซับแรงชนจากมุมบน — Infinity Series' },
+    { code: 'Erase', name: 'Erase',    effect: '+DEF',      desc: 'ลบล้าง ลดแรงปะทะจากคู่แข่ง' },
+    { code: 'Flow', name: 'Flow',     effect: '+STA',      desc: 'ไหลลื่น ลดแรงเสียดทาน เพิ่ม Stamina' },
+    { code: 'Gravity', name: 'Gravity',  effect: '+DEF',      desc: 'แรงโน้มถ่วง เพิ่มน้ำหนักและเสถียรภาพ' },
+    { code: 'Guard', name: 'Guard',    effect: '+DEF',      desc: 'ป้องกัน ซับแรงชนรอบด้าน' },
+    { code: 'Massive', name: 'Massive',  effect: '+DEF/STA',  desc: 'มหึมา เพิ่มมวลรวม ป้องกันและ Stamina' },
+    { code: 'Odd', name: 'Odd',      effect: '+Balance',  desc: 'คี่ ปรับสมดุลแบบไม่สมมาตร' },
+    { code: 'Outer', name: 'Outer',    effect: '+STA',      desc: 'ขอบนอก กระจายน้ำหนักออกขอบ Stamina สูง' },
+    { code: 'Peak', name: 'Peak',     effect: '+ATK',      desc: 'ยอดเขา ปะทะจากมุมบนแรง' },
+    { code: 'Quell', name: 'Quell',    effect: '+DEF',      desc: 'ระงับ ลดแรงปะทะจากคู่แข่ง' },
+    { code: 'Tough', name: 'Tough',    effect: '+DEF',      desc: 'ทนทาน เพิ่มความทนทานต่อ Burst' },
+    { code: 'Zillion', name: 'Zillion',  effect: '+ATK',      desc: 'ซิลเลียน พลังโจมตีสูงสุด — Infinity Series' },
+    { code: 'Force', name: 'Force',    effect: '+ATK',      desc: 'พลัง แรงปะทะมหาศาล' },
+    { code: 'I', name: 'I',        effect: '+Balance',  desc: 'แกนกลาง ปรับ Inertia Factor' },
 ];
 
 // ── Lock Chips (CX) ──────────────────────────────────────────────────────────
