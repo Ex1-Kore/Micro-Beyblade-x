@@ -61,7 +61,7 @@ const LOCK_CHIPS = [
     { code: 'CX-10', name: 'Hunt',     bey: 'Wolf Hunt',     desc: 'ล็อกชิป Wolf Hunt' },
     { code: 'CX-11', name: 'Might',    bey: 'Emperor Might', desc: 'ล็อกชิป Emperor Might' },
     { code: 'CX-13', name: 'Bliz',     bey: 'Bahamut Bliz',  desc: 'ล็อกชิป Bahamut Bliz — Infinity Series' },
-    { code: 'CX-14', name: 'Fortress', bey: 'Knight Fortress',desc: 'ล็อกชิป Knight Fortress — Infinity Series' },
+    { code: 'CX-00', name: 'Drake',   bey: 'Drake Brave',   desc: 'ล็อกชิป Drake — Rare Bey Get Battle (Metal Coat Blue)' },
 ];
 
 function Table({ headers, rows }: { headers: string[]; rows: (string | React.ReactNode)[][] }) {

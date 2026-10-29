@@ -80,6 +80,7 @@ export const BLADES: BladeEntry[] = [
     { id:'KnightFortress', code: 'CX-14', name:'Knight Fortress', series:'CX', type:'Defense', weight:37.99, atk:0, def:0, sta:0, inertiaFactor:1.15, desc:'Knight Fortress', radiusMm:23.2, heightMm:11.0, distribution:'Four-piece armored mass', img:'Knight Fortress' },
     { id:'RagnaRage', code: 'CX-15', name:'Ragna Rage', series:'CX', type:'Stamina', weight:38.36, atk:0, def:0, sta:0, inertiaFactor:1.18, desc:'Ragna Rage', radiusMm:24.1, heightMm:9.6, distribution:'Symmetric ring mass', img:'Ragna Rage' },
     { id:'UnicornDelta', code: 'CX-17', name:'Unicorn Delta', series:'CX', type:'Balance', weight:37.5, atk:0, def:0, sta:0, inertiaFactor:1.12, desc:'Unicorn Delta', radiusMm:23.6, heightMm:10.1, distribution:'Triangular balanced mass', img:'Unicorn Delta' },
+    { id:'DrakeBrave', code: 'CX-00', name:'Drake Brave', series:'CX', type:'Attack', weight:44.6, atk:0, def:0, sta:0, inertiaFactor:1.20, desc:'Drake Brave', radiusMm:undefined, heightMm:undefined, distribution:'Rare Bey Get Battle (CX-00) — Metal Coat Blue', img: null },
     { id:'LusterDragoon', code: 'BX-52', name:'Luster Dragoon', series:'BX', type:'Attack', weight:42.8, atk:75, def:15, sta:10, inertiaFactor:1.00, desc:'Luster Dragoon', radiusMm:undefined, heightMm:undefined, distribution:'BX Expand Blade (Left Spin) — ⚠️ k ยังไม่ตรวจสอบ', img: null },
 ];
 
