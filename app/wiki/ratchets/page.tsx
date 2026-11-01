@@ -42,12 +42,11 @@ type RatchetSpecEntry = {
 const RATCHET_GROUPS: { title: string; note?: string; items: RatchetSpecEntry[] }[] = [
     {
         title: 'Low-Profile (5.0 - 5.5 mm)',
-        note: 'ความสูงเตี้ยพิเศษ เหมาะกับการมุดและสาย Attack / CX modular lines',
+        note: 'ความสูงเตี้ยพิเศษ เหมาะกับการมุดและสาย Attack',
         items: [
             { code: '1-50', teeth: 1, heightMm: 5.0, avgWeightG: 5.70, weightRange: '5.62–5.78g', profile: 'Low', character: 'Eccentric single heavy mass; powerful under-body smash; top Attack choice' },
             { code: '4-50', teeth: 4, heightMm: 5.0, avgWeightG: 6.12, profile: 'Low', character: '4-corner balanced low profile; resists low-angle knockback' },
             { code: '4-55', teeth: 4, heightMm: 5.5, avgWeightG: 6.25, profile: 'Low', character: 'Semi-standard low height for CX; allows slight clearance when tilted' },
-            { code: 'CX-modular examples', teeth: 'var', heightMm: 5.0, profile: 'Low', character: 'S6-60 / R4-55 / B6-80 / BK1-50 / FE4-55 — modular CX codes with varied teeth/heights' },
         ],
     },
     {
@@ -60,7 +59,6 @@ const RATCHET_GROUPS: { title: string; note?: string; items: RatchetSpecEntry[] 
             { code: '4-60', teeth: 4, heightMm: 6.0, avgWeightG: 6.35, profile: 'Standard', character: 'Square profile: stable balance for Balance types' },
             { code: '5-60', teeth: 5, heightMm: 6.0, avgWeightG: 6.60, profile: 'Standard', character: 'Dense 5-tooth defensive profile; hides lock angles well' },
             { code: '9-60', teeth: 9, heightMm: 6.0, avgWeightG: 6.55, weightRange: '6.45–6.62g', profile: 'Standard', character: 'Top-tier Stamina: near-complete ring, minimal vibration' },
-            { code: '5-65', teeth: 5, heightMm: 6.5, avgWeightG: 6.68, profile: 'Standard', character: 'Raised 0.5 mm to avoid low Bits scraping at endgame' },
         ],
     },
     {
@@ -100,8 +98,7 @@ const SERIES_STYLE: Record<string, { text: string; border: string; bg: string }>
     CX: { text: 'text-violet-400', border: 'border-violet-800/50', bg: 'bg-violet-950/40' },
 };
 
-type FilterSeries = 'ALL' | 'BX' | 'UX' | 'CX';
-type FilterSides  = 'ALL' | '0' | '1' | '2' | '3' | '4' | '5' | '7' | '9';
+type FilterSides  = 'ALL' | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 
 function RatchetCard({ r }: { r: RatchetEntry }) {
     const sl = sidesLabel(r.sides);
@@ -146,18 +143,16 @@ function RatchetCard({ r }: { r: RatchetEntry }) {
 }
 
 export default function RatchetsPage() {
-    const [filterSeries, setFilterSeries] = useState<FilterSeries>('ALL');
     const [filterSides,  setFilterSides]  = useState<FilterSides>('ALL');
     const [search, setSearch]             = useState('');
 
     const filtered = RATCHETS.filter(r => {
-        if (filterSeries !== 'ALL' && r.series !== filterSeries) return false;
         if (filterSides  !== 'ALL' && r.sides  !== Number(filterSides))  return false;
         if (search && !r.name.toLowerCase().includes(search.toLowerCase())) return false;
         return true;
     });
 
-    const allSides: FilterSides[] = ['ALL','0','1','2','3','4','5','7','9'];
+    const allSides: FilterSides[] = ['ALL','0','1','2','3','4','5','6','7','8','9'];
 
     return (
         <div className="min-h-screen bg-[#090d16] text-slate-100 font-sans">
@@ -189,6 +184,10 @@ export default function RatchetsPage() {
                         <span className="font-mono text-amber-300">3-60</span>{' '}
                         = <strong className="text-white">3 แฉก</strong>, ความสูง{' '}
                         <strong className="text-white">6.0 mm</strong>
+                    </p>
+                    <p className="text-slate-500 text-xs">
+                        ครบ {RATCHETS.length} รายการตามฐานข้อมูล • รูปทั้งหมดจาก{' '}
+                        <code className="rounded bg-slate-800 px-1 text-slate-300">public/products/RATCHETS/</code>
                     </p>
                     {/* Height legend */}
                     <div className="flex justify-center gap-4 text-xs pt-1">
@@ -241,20 +240,6 @@ export default function RatchetsPage() {
                         className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-400 transition-all"
                     />
                     <div className="flex flex-wrap gap-2 justify-between">
-                        {/* Series */}
-                        <div className="flex flex-wrap gap-1.5">
-                            <span className="text-xs text-slate-500 self-center mr-1">Series:</span>
-                            {(['ALL','BX','UX','CX'] as FilterSeries[]).map(s => (
-                                <button key={s} onClick={() => setFilterSeries(s)}
-                                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all border ${
-                                        filterSeries === s
-                                            ? 'bg-sky-400 text-black border-sky-400'
-                                            : 'bg-slate-800 text-slate-400 border-slate-700 hover:border-slate-500'
-                                    }`}>
-                                    {s === 'ALL' ? 'ทั้งหมด' : s}
-                                </button>
-                            ))}
-                        </div>
                         {/* Sides */}
                         <div className="flex flex-wrap gap-1.5">
                             <span className="text-xs text-slate-500 self-center mr-1">แฉก:</span>
@@ -308,7 +293,7 @@ export default function RatchetsPage() {
                 </div>
 
                 <div className="text-center text-xs text-slate-700 py-4">
-                    ข้อมูลและรูปภาพอ้างอิงจาก Takara Tomy Beyblade X Official
+                    ข้อมูลอ้างอิงจาก Takara Tomy Beyblade X Official • รูปจาก `public/products/RATCHETS/`
                 </div>
             </main>
 

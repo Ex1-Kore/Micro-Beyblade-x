@@ -1,8 +1,11 @@
 # RATCHETS File List
 
+- 0-60_p.png
 - 0-70_p.png
 - 0-80_p.png
+- 1-50_p.png
 - 1-60_p.png
+- 1-70_p.png
 - 1-80_p.png
 - 2-60_p.png
 - 2-70_p.png
@@ -11,19 +14,26 @@
 - 3-70_p.png
 - 3-80_p.png
 - 3-85_p.png
+- 4-50_p.png
 - 4-55_p.png
 - 4-60_p.png
 - 4-70_p.png
 - 4-80_p.png
+- 5-50_p.png
 - 5-60_p.png
 - 5-70_p.png
 - 5-80_p.png
 - 6-60_p.png
+- 6-70_p.png
 - 6-80_p.png
+- 7-55_p.png
 - 7-60_p.png
 - 7-70_p.png
 - 7-80_p.png
+- 8-70_p.png
+- 8-80_p.png
 - 9-60_p.png
+- 9-65_p.png
 - 9-70_p.png
 - 9-80_p.png
 - M-85_p.png
