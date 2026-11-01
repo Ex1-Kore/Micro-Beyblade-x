@@ -1,4 +1,5 @@
 import { PARTS_DB } from './parts-db';
+import { BX_PRODUCT_IMAGE_MAP } from './bx-product-images';
 import type { BladePart, BitPart, RatchetPart } from './types';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -119,8 +120,8 @@ function toProduct(section: string, index: number, p: RawProduct): Product {
 }
 
 export const BASIC_LINE: Product[] = [
-    { code: 'BX-00', name: 'Mammoth Tusk 2-80E', releaseDate: '27 ธ.ค. 2024', image: '/blade/bx/Mammoth Tusk.png' },
-    { code: 'BX-00', name: 'Samurai Steel 5-70GF', releaseDate: '15 มิ.ย. 2025', image: '/blade/bx/Samurai Steel 5-70GF.jpeg' },
+    { code: 'BX-00', name: 'Mammoth Tusk 2-80E', releaseDate: '27 ธ.ค. 2024' },
+    { code: 'BX-00', name: 'Samurai Steel 5-70GF', releaseDate: '15 มิ.ย. 2025' },
     { code: 'BX-01', name: 'Dran Sword 3-60F', releaseDate: '15 ก.ค. 2023', note: 'Starter' },
     { code: 'BX-02', name: 'Hells Scythe 4-60T', releaseDate: '15 ก.ค. 2023', note: 'Starter' },
     { code: 'BX-03', name: 'Wizard Arrow 4-80B', releaseDate: '15 ก.ค. 2023', note: 'Starter' },
@@ -280,14 +281,17 @@ const PRODUCT_IMAGE_OVERRIDES: Record<string, string> = {
 };
 
 export function getBladeImgPath(bladeName: string, productCode?: string): string | null {
+    // 1) ถ้ามี product code → หาไฟล์จาก public/products/<series>/ (BX ใช้ products/BX)
     if (productCode) {
-        const productOverride = PRODUCT_IMAGE_OVERRIDES[productCode];
-        if (productOverride) return productOverride;
+        const matched = findProductImageFile({ code: productCode, name: bladeName } as Product);
+        if (matched) return `/products/${matched}`;
     }
-    const override = BLADE_IMAGE_OVERRIDES[bladeName];
-    if (override) return override;
+    // 2) BX: ใช้ map ไปยัง public/products/BX/
+    const bxFile = BX_PRODUCT_IMAGE_MAP[bladeName];
+    if (bxFile) return `/products/BX/${encodeURIComponent(bxFile)}`;
+    // 3) UX/CX: ใช้รูปเดิมใน /blade/<series>/
     for (const { set, dir } of BLADE_IMAGE_DIRS) {
-        if (set.has(bladeName)) return `/blade/${dir}/${encodeURIComponent(bladeName)}.png`;
+        if (dir !== 'bx' && set.has(bladeName)) return `/blade/${dir}/${encodeURIComponent(bladeName)}.png`;
     }
     return null;
 }
