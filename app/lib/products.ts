@@ -16,7 +16,7 @@ const g = globalThis as unknown as {
 function buildProductImageMap(): Map<string, string[]> {
     const baseDir = path.join(process.cwd(), 'public', 'products');
     const map = new Map<string, string[]>();
-    for (const series of ['bx', 'ux', 'cx']) {
+    for (const series of ['BX', 'ux', 'cx']) {
         const dir = path.join(baseDir, series);
         if (!fs.existsSync(dir)) continue;
         for (const file of fs.readdirSync(dir)) {

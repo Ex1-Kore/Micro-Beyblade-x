@@ -42,6 +42,8 @@ export interface RatchetPart {
     sta: number;
     bst: number;
     desc: string;
+    /** ชื่อไฟล์รูปใน /public/products/RATCHETS/<img>.png — null = ยังไม่มีรูป */
+    img?: string | null;
 }
 
 export interface BitPart {
@@ -56,6 +58,8 @@ export interface BitPart {
     bst: number;
     /** ค่าต้านทาน Burst (1-5) ใช้ในสูตร physics risk score */
     burstResist: number;
+    /** ชื่อไฟล์รูปใน /public/products/BITS/<img>.png — null = ยังไม่มีรูป */
+    img?: string | null;
     desc: string;
 }
 

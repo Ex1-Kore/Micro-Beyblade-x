@@ -1,0 +1,27 @@
+# รายชื่อไฟล์ในโฟลเดอร์
+
+- Accel_p.png
+- Ball_p.png
+- Cyclone_p.png
+- DiscBall_p.png
+- Dot_p.png
+- Elevate_p.png
+- Flat_p.png
+- GearBall_p.png
+- GearFlat_p.png
+- GearNeedle_p.png
+- GearPoint_p.png
+- Glide_p.png
+- Hexa_p.png
+- HighTaper_p.png
+- Highneedle_p.png
+- LowFlat_p.png
+- MetalNeedle_p.png
+- Needle_p.png
+- Orb_p.png
+- Point_p.png
+- Quake_p.png
+- Rush_p.png
+- Spike_p.png
+- Taper_p.png
+- Unite_p.png

@@ -1,6 +1,8 @@
 // Shared data for Blades — ใช้ร่วมกันระหว่าง /wiki/blades และ /wiki/blade/[id]
 // ค่า stats (weight, atk, def, sta, inertiaFactor, radiusMm, heightMm, distribution) เป็นข้อมูลจริงจาก parts-db / lab specs
 
+import { BX_PRODUCT_IMAGE_MAP } from './bx-product-images';
+
 export type BladeSeries = 'BX' | 'UX' | 'CX';
 export type BladeType = 'Attack' | 'Defense' | 'Stamina' | 'Balance';
 
@@ -94,6 +96,10 @@ export const AUTHORITATIVE_COUNTS = {
 };
 
 export function getBladeImagePath(blade: BladeEntry): string | null {
+    if (blade.series === 'BX') {
+        const file = BX_PRODUCT_IMAGE_MAP[blade.name];
+        if (file) return `/products/BX/${encodeURIComponent(file)}`;
+    }
     if (!blade.img) return null;
     return `/blade/${blade.series.toLowerCase()}/${encodeURIComponent(blade.img)}.png`;
 }

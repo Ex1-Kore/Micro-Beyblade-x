@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Flame, Shield, RotateCw, Zap, Sparkles, Award, Info } from 'lucide-react';
 import type { BladePart, BitPart, RatchetPart, SystemType, ComboStats } from '../lib/types';
+import { BX_PRODUCT_IMAGE_MAP } from '../lib/bx-product-images';
 
 interface BeyCardProps {
     system: SystemType;
@@ -21,8 +22,12 @@ const TYPE_COLOR_MAP = {
     Balance: { glow: 'bg-purple-500', badge: 'bg-purple-500/20 text-purple-400 border-purple-500/40' },
 };
 
-/** สร้าง path รูป: /blade/<series_lower>/<img>.png */
+/** สร้าง path รูป: BX ใช้ /products/BX/<file>.png, อื่นๆ /blade/<series>/<img>.png */
 function getBladeImgPath(blade: BladePart): string | null {
+    if (blade.series === 'BX') {
+        const file = BX_PRODUCT_IMAGE_MAP[blade.name];
+        if (file) return `/products/BX/${encodeURIComponent(file)}`;
+    }
     if (!blade.img) return null;
     return `/blade/${blade.series.toLowerCase()}/${blade.img}.png`;
 }
@@ -64,7 +69,13 @@ export default function BeyCard({
 
                 {/* Badges */}
                 <div className="w-full flex justify-between items-center mb-6 z-10 gap-2">
-                    <span className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wider border uppercase shadow-lg ${typeColors.badge} bg-opacity-50 backdrop-blur-sm`}>
+                    <span className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wider border uppercase shadow-lg ${typeColors.badge} bg-opacity-50 backdrop-blur-sm flex items-center gap-2`}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src={`/products/TYPE/${comboStats.primaryType.toLowerCase()}.png`}
+                            alt={comboStats.primaryType}
+                            className="w-4 h-4 object-contain"
+                        />
                         {comboStats.primaryType} TYPE
                     </span>
                     <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-amber-500/30 to-amber-400/20 text-amber-300 border border-amber-500/40 shadow-lg shadow-amber-500/20">

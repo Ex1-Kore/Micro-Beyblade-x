@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Sliders, Layers, FlaskConical, BookOpen } from 'lucide-react';
+import WhatsNewBell from './WhatsNewBell';
 
 export type AppTab = 'builder' | 'deck' | 'physics';
 
@@ -53,6 +54,7 @@ export default function AppHeader({ activeTab, onTabChange }: AppHeaderProps) {
                         ))}
                     </div>
 
+                    <WhatsNewBell />
                     <Link
                         href="/wiki"
                         className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl border border-slate-600/50 text-slate-300 hover:text-white hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/20 transition-all text-sm font-bold hover:bg-slate-800/30 backdrop-blur-sm flex-shrink-0"

@@ -64,7 +64,7 @@ function BladeCard({ blade, onPreview }: { blade: BladeEntry; onPreview: (blade:
                     {blade.series}
                 </span>
                 {/* No-image indicator */}
-                {!blade.img && (
+                {!getBladeImagePath(blade) && (
                     <span className="absolute bottom-2 right-2 text-[9px] text-slate-700">ยังไม่มีรูป</span>
                 )}
                 <span className="absolute bottom-2 left-2 text-[9px] text-slate-300 bg-slate-900/80 px-1.5 py-0.5 rounded border border-slate-700">
