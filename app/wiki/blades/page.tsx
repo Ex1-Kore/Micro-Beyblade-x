@@ -49,14 +49,14 @@ function BladeCard({ blade, onPreview }: { blade: BladeEntry; onPreview: (blade:
                 {imagePath ? (
                     <Image
                         src={imagePath}
-                        alt={blade.name}
+                        alt={`${blade.code ?? ''} ${blade.name}`}
                         width={110}
                         height={110}
                         className="object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-300 max-h-28 w-auto"
                     />
                 ) : (
                     <div className="w-20 h-20 rounded-2xl bg-slate-800 flex items-center justify-center text-slate-600 text-xs font-bold text-center px-1">
-                        {blade.name}
+                        {blade.code} {blade.name}
                     </div>
                 )}
                 {/* Series badge top-right */}
@@ -75,7 +75,7 @@ function BladeCard({ blade, onPreview }: { blade: BladeEntry; onPreview: (blade:
             {/* Info */}
             <div className="p-3 space-y-2">
                 <div className="flex items-start justify-between gap-1">
-                    <div className="font-bold text-white text-sm leading-tight">{blade.name}</div>
+                    <div className="font-bold text-white text-sm leading-tight">{blade.code ? `${blade.code} ${blade.name}` : blade.name}</div>
                     <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border shrink-0 flex items-center gap-0.5 ${TYPE_STYLE[blade.type]}`}>
                         {TYPE_ICON[blade.type]}{blade.type}
                     </span>
@@ -261,7 +261,7 @@ export default function BladesPage() {
                         <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
                             <div>
                                 <p className="text-[10px] uppercase tracking-[0.3em] text-cyan-400">Blade Preview</p>
-                                <h2 className="text-lg font-black text-white">{selectedBlade.name}</h2>
+                                <h2 className="text-lg font-black text-white">{selectedBlade.code ? `${selectedBlade.code} ${selectedBlade.name}` : selectedBlade.name}</h2>
                             </div>
                             <button
                                 type="button"
@@ -276,14 +276,14 @@ export default function BladesPage() {
                                 {getBladeImagePath(selectedBlade) ? (
                                     <Image
                                         src={getBladeImagePath(selectedBlade)!}
-                                        alt={selectedBlade.name}
+                                        alt={selectedBlade.code ? `${selectedBlade.code} ${selectedBlade.name}` : selectedBlade.name}
                                         width={220}
                                         height={220}
                                         className="max-h-56 w-auto object-contain"
                                     />
                                 ) : (
                                     <div className="w-32 h-32 rounded-3xl border border-slate-700 bg-slate-800 flex items-center justify-center text-center px-2 text-sm font-bold text-slate-600">
-                                        {selectedBlade.name}
+                                        {selectedBlade.code ? `${selectedBlade.code} ${selectedBlade.name}` : selectedBlade.name}
                                     </div>
                                 )}
                             </div>
