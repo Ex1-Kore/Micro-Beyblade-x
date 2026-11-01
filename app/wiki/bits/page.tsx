@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight, Zap } from 'lucide-react';
+import { PARTS_DB } from '../../lib/parts-db';
+import type { BitPart } from '../../lib/types';
 
 interface BitEntry {
     code?: string;
@@ -15,55 +17,17 @@ interface BitEntry {
     img: string | null;
 }
 
-const BITS: BitEntry[] = [
-    // Attack Type Bits
-    { code: 'BX-01', abbr: 'F',  name: 'Flat',         series: 'BX', type: 'Attack',  desc: 'หน้าแบนกว้างมาตรฐาน วิ่งทำความเร็วสูง', img: 'Flat (F)' },
-    { code: 'BX-23', abbr: 'GF', name: 'Gear Flat',    series: 'BX', type: 'Attack',  desc: 'หน้าแบนพร้อมฟันเฟืองยาว', img: 'Gear Flat (GF)' },
-    { code: 'BX-14', abbr: 'LF', name: 'Low Flat',     series: 'BX', type: 'Attack',  desc: 'หน้าแบนความสูงต่ำลง 1mm', img: 'Low Flat (LF)' },
-    { code: 'BX-02', abbr: 'T',  name: 'Taper',        series: 'BX', type: 'Attack',  desc: 'หน้าตัดลาดเอียง', img: 'Taper (T)' },
-    { code: 'BX-21', abbr: 'HT', name: 'High Taper',   series: 'BX', type: 'Attack',  desc: 'Taper ยกสูง', img: 'High Taper (HT)' },
-    { code: 'BX-20', abbr: 'R',  name: 'Rush',         series: 'BX', type: 'Attack',  desc: 'ฟันเฟืองถี่', img: 'Rush (R)' },
-    { code: 'UX-01', abbr: 'A',  name: 'Accel',        series: 'UX', type: 'Attack',  desc: 'ปลายออกแบบเพื่อความเร็วต้น', img: 'Accel (A)' },
-    { abbr: 'A*', name: 'Accelerator', series: 'UX', type: 'Attack', desc: 'ปลายแกนใหญ่พิเศษ', img: null },
-    { abbr: 'C',  name: 'Cyclone',     series: undefined, type: 'Attack', desc: 'ปลายก้นหอย สร้างแรงหมุน', img: 'Cyclone (C)' },
-    { abbr: 'J',  name: 'Jolt',        series: 'BX', type: 'Attack',  desc: 'ฟันเฟืองตั้งฉาก', img: null },
-    { code: 'BX-31', abbr: 'Q',  name: 'Quake',        series: 'BX', type: 'Attack',  desc: 'หน้าบิทตัดเฉียง', img: 'Quake (Q)' },
-    { abbr: 'LR', name: 'Low Rush',    series: undefined, type: 'Attack', desc: 'Rush ระดับต่ำ', img: 'Low Rush (LR)' },
-    { abbr: 'RA', name: 'Rubber Accel', series: undefined, type: 'Attack', desc: 'ยางกันลื่น', img: 'Rubber Accel (RA)' },
-    { abbr: 'I',  name: 'Ignition',    series: 'CX', type: 'Attack',  desc: 'ฟันเฟืองเฉียง CX', img: null },
-    { abbr: 'Gr', name: 'Gear Rush',   series: 'CX', type: 'Attack',  desc: 'ผสม Gear+Rush', img: null },
-
-    // Stamina Type Bits
-    { code: 'BX-03', abbr: 'B',  name: 'Ball',         series: 'BX', type: 'Stamina', desc: 'ปลายทรงกลม ลดแรงเสียดทาน', img: 'Ball (B)' },
-    { code: 'BX-16', abbr: 'O',  name: 'Orb',          series: 'BX', type: 'Stamina', desc: 'ทรงกลมขนาดเล็ก', img: 'Orb (O)' },
-    { code: 'UX-03', abbr: 'DB', name: 'Disc Ball',    series: 'UX', type: 'Stamina', desc: 'มีแผ่นดิสก์พยุง', img: 'Disc Ball (DB)' },
-    { code: 'UX-07', abbr: 'G',  name: 'Glide',        series: 'UX', type: 'Stamina', desc: 'แกนปลายกลมเรียว', img: 'Glide (G)' },
-    { abbr: 'FB', name: 'Free Ball',    series: undefined, type: 'Stamina', desc: 'ลูกบอลหมุนอิสระ', img: 'Free Ball (FB)' },
-    { abbr: 'GB', name: 'Gear Ball',    series: undefined, type: 'Stamina', desc: 'เฟืองผสมลูกบอล', img: 'Gear Ball (GB)' },
-    { abbr: 'E',  name: 'Elevate',      series: undefined, type: 'Stamina', desc: 'ปลายยกตัวสูง', img: 'Elevate (E)' },
-    { abbr: 'L',  name: 'Level',        series: undefined, type: 'Stamina', desc: 'ปลายราบระดับ', img: 'Level (L)' },
-    { code: 'CX-LO', abbr: 'LO', name: 'Low Orb',      series: 'CX', type: 'Stamina', desc: 'Orb เตี้ยพิเศษ', img: null },
-    { code: 'CX-Y', abbr: 'Y',  name: 'Yielding',     series: 'CX', type: 'Stamina', desc: 'บิทหนักที่สุด', img: null },
-
-    // Defense Type Bits
-    { code: 'BX-04', abbr: 'N',  name: 'Needle',       series: 'BX', type: 'Defense', desc: 'ปลายแหลมเข็ม', img: 'Needle (N)' },
-    { code: 'BX-13', abbr: 'HN', name: 'High Needle',  series: 'BX', type: 'Defense', desc: 'เข็มสูง', img: 'High Needle (HN)' },
-    { code: 'BX-27', abbr: 'GN', name: 'Gear Needle',  series: 'BX', type: 'Defense', desc: 'ปลายแหลมมีฟัน', img: 'Gear Needle (GN)' },
-    { code: 'BX-19', abbr: 'S',  name: 'Spike',        series: 'BX', type: 'Defense', desc: 'ปลายแหลมสั้น', img: 'Spike (S)' },
-    { code: 'UX-02', abbr: 'H',  name: 'Hexa',         series: 'UX', type: 'Defense', desc: 'ปลายหกเหลี่ยม', img: 'Hexa (H)' },
-    { abbr: 'BS', name: 'Bound Spike',  series: undefined, type: 'Defense', desc: 'เดือยสปริงรับแรง', img: 'Bound Spike (BS)' },
-    { abbr: 'MN', name: 'Metal Needle', series: undefined, type: 'Defense', desc: 'เข็มโลหะ', img: 'Metal Needle (MN)' },
-    { abbr: 'UN', name: 'Under Needle', series: undefined, type: 'Defense', desc: 'เข็มใต้จาน', img: 'Under Needle (UN)' },
-    { abbr: 'RB', name: 'Rubber Ball',  series: 'BX', type: 'Defense', desc: 'ปลายทรงกลมยาง', img: null },
-
-    // Balance Type Bits
-    { code: 'BX-15', abbr: 'P',  name: 'Point',        series: 'BX', type: 'Balance', desc: 'กึ่งแหลมกึ่งแบน', img: 'Point (P)' },
-    { code: 'BX-33', abbr: 'U',  name: 'Unite',        series: 'BX', type: 'Balance', desc: 'แกนกลางแหลม', img: 'Unite (U)' },
-    { abbr: 'D',  name: 'Dot',           series: undefined, type: 'Balance', desc: 'จุดเดียวเล็ก', img: 'Dot (D)' },
-    { abbr: 'GP', name: 'Gear Point',    series: undefined, type: 'Balance', desc: 'เฟืองจุด', img: 'Gear Point (GP)' },
-    { abbr: 'TP', name: 'Trans Point',   series: undefined, type: 'Balance', desc: 'จุดแปลงร่าง', img: 'Trans Point (TP)' },
-    { abbr: 'GU', name: 'Gear Unite',     series: 'CX', type: 'Balance', desc: 'เพิ่มฟันรอบ Unite', img: null },
-];
+const BITS: BitEntry[] = PARTS_DB.bits.map((b: BitPart) => {
+    const m = b.name.match(/\(([^)]+)\)/);
+    const name = m ? m[1] : b.name;
+    return {
+        abbr: b.id,
+        name,
+        type: b.type as BitEntry['type'],
+        desc: b.desc,
+        img: b.img ?? null,
+    };
+});
 
 const TYPE_STYLE: Record<string, string> = {
     Attack:  'bg-rose-950/60 text-rose-400 border-rose-800/40',
@@ -92,7 +56,7 @@ function BitCard({ bit }: { bit: BitEntry }) {
             <div className="relative bg-slate-950 flex items-center justify-center h-32 p-3">
                 {bit.img ? (
                     <Image
-                        src={`/bit/bits/${bit.img}.png`}
+                        src={`/products/BITS/${bit.img}.png`}
                         alt={bit.name}
                         width={88} height={88}
                         className="object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-300 max-h-24 w-auto"
