@@ -25,6 +25,10 @@ const TYPE_COLOR_MAP = {
 /** สร้าง path รูป: BX ใช้ /products/BX/<file>.png, อื่นๆ /blade/<series>/<img>.png */
 function getBladeImgPath(blade: BladePart): string | null {
     if (blade.series === 'BX') {
+        // แต่ละรหัสสินค้ามีไฟล์ของตัวเอง (BX-01, BX-07, ...) — ห้ามยึดตามชื่ออย่างเดียว
+        if (blade.img && blade.img.startsWith('BX-')) {
+            return `/products/BX/${encodeURIComponent(blade.img)}.png`;
+        }
         const file = BX_PRODUCT_IMAGE_MAP[blade.name];
         if (file) return `/products/BX/${encodeURIComponent(file)}`;
     }
@@ -134,7 +138,7 @@ export default function BeyCard({
                 {/* Title */}
                 <div className="text-center z-10 space-y-1 mt-1">
                     <h2 className="text-2xl font-black text-white tracking-wide">
-                        {selectedBlade.name} {selectedRatchet.name}{selectedBit.id}
+                        {selectedBlade.code ? `${selectedBlade.code} ` : ''}{selectedBlade.name} {selectedRatchet.name}{selectedBit.id}
                     </h2>
                     <p className="text-xs text-slate-400 font-medium">
                         {system} Line • {isLeftSpin ? 'Left Spin' : 'Right Spin'}

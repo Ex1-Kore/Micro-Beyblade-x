@@ -1,4 +1,5 @@
 import { PARTS_DB } from './parts-db';
+import { BX_CATALOG } from './bx-catalog';
 import { BX_PRODUCT_IMAGE_MAP } from './bx-product-images';
 import type { BladePart, BitPart, RatchetPart } from './types';
 import * as fs from 'fs';
@@ -119,56 +120,18 @@ function toProduct(section: string, index: number, p: RawProduct): Product {
     return { ...p, slug: `${section}-${index}` };
 }
 
-export const BASIC_LINE: Product[] = [
-    { code: 'BX-00', name: 'Mammoth Tusk 2-80E', releaseDate: '27 ธ.ค. 2024' },
-    { code: 'BX-00', name: 'Samurai Steel 5-70GF', releaseDate: '15 มิ.ย. 2025' },
-    { code: 'BX-01', name: 'Dran Sword 3-60F', releaseDate: '15 ก.ค. 2023', note: 'Starter' },
-    { code: 'BX-02', name: 'Hells Scythe 4-60T', releaseDate: '15 ก.ค. 2023', note: 'Starter' },
-    { code: 'BX-03', name: 'Wizard Arrow 4-80B', releaseDate: '15 ก.ค. 2023', note: 'Starter' },
-    { code: 'BX-04', name: 'Knight Shield 3-80N', releaseDate: '15 ก.ค. 2023', note: 'Starter' },
-    { code: 'BX-05', name: 'Wizard Arrow 4-80B', releaseDate: '15 ก.ค. 2023' },
-    { code: 'BX-06', name: 'Knight Shield 3-80N', releaseDate: '15 ก.ค. 2023' },
-    { code: 'BX-07', name: 'Start Dash Set', releaseDate: '15 ก.ค. 2023' },
-    { code: 'BX-08', name: '3on3 Deck Set', releaseDate: '15 ก.ค. 2023' },
-    { code: 'BX-09', name: 'Beybattle Pass', releaseDate: '15 ก.ค. 2023' },
-    { code: 'BX-10', name: 'Xtreme Stadium', releaseDate: '15 ก.ค. 2023' },
-    { code: 'BX-11', name: 'Launcher Grip', releaseDate: '15 ก.ค. 2023' },
-    { code: 'BX-12', name: '3on3 Deck Case', releaseDate: '15 ก.ค. 2023' },
-    { code: 'BX-13', name: 'Knight Lance 4-80HN', releaseDate: '10 ส.ค. 2023' },
-    { code: 'BX-14', name: 'Random Booster Volume 1', releaseDate: '9 ก.ย. 2023' },
-    { code: 'BX-15', name: 'Leon Claw 5-60P', releaseDate: '7 ต.ค. 2023', note: 'Starter' },
-    { code: 'BX-16', name: 'Random Booster Viper Tail Select', releaseDate: '7 ต.ค. 2023' },
-    { code: 'BX-17', name: 'Battle Entry Set', releaseDate: '7 ต.ค. 2023' },
-    { code: 'BX-18', name: 'String Launcher', releaseDate: '7 ต.ค. 2023' },
-    { code: 'BX-19', name: 'Rhino Horn 3-80S', releaseDate: '2 พ.ย. 2023' },
-    { code: 'BX-20', name: 'Dran Dagger Deck Set', releaseDate: '2 พ.ย. 2023' },
-    { code: 'BX-21', name: 'Hells Chain Deck Set', releaseDate: '2 พ.ย. 2023' },
-    { code: 'BX-22', name: 'Dran Sword 3-60F Entry Package', releaseDate: '2 ธ.ค. 2023' },
-    { code: 'BX-23', name: 'Phoenix Wing 9-60GF', releaseDate: '27 ธ.ค. 2023', note: 'Starter' },
-    { code: 'BX-24', name: 'Random Booster Vol. 2', releaseDate: '27 ธ.ค. 2023' },
-    { code: 'BX-25', name: 'Gear Case', releaseDate: '27 ธ.ค. 2023' },
-    { code: 'BX-26', name: 'Unicorn Sting 5-60GP', releaseDate: '27 ม.ค. 2024' },
-    { code: 'BX-27', name: 'Random Booster Sphinx Cowl Select', releaseDate: '22 ก.พ. 2024' },
-    { code: 'BX-28', name: 'String Launcher (White Ver.)', releaseDate: '30 มี.ค. 2024' },
-    { code: 'BX-29', name: 'Custom Grip (White Ver.)', releaseDate: '30 มี.ค. 2024' },
-    { code: 'BX-30', name: 'Custom Grip (Red Ver.)', releaseDate: '30 มี.ค. 2024' },
-    { code: 'BX-31', name: 'Random Booster Vol. 3 Tyranno Beat 4-70Q', releaseDate: '27 เม.ย. 2024' },
-    { code: 'BX-32', name: 'Wide Xtreme Stadium', releaseDate: '12 ต.ค. 2024' },
-    { code: 'BX-33', name: 'Weiss Tiger 3-60U', releaseDate: '15 มิ.ย. 2024' },
-    { code: 'BX-34', name: 'Cobalt Dragoon 2-60C', releaseDate: '13 ก.ค. 2024', note: 'Starter' },
-    { code: 'BX-35', name: 'Random Booster Vol. 4 (Black Shell 4-60D)', releaseDate: '13 ก.ค. 2024' },
-    { code: 'BX-36', name: 'Random Booster Whale Wave Select (Whale Wave 5-80E)', releaseDate: '14 ก.ย. 2024' },
-    { code: 'BX-37', name: 'Double Xtreme Stadium Set', releaseDate: '12 ต.ค. 2024' },
-    { code: 'BX-38', name: 'Crimson Garuda 4-70TP', releaseDate: '2 พ.ย. 2024' },
-    { code: 'BX-39', name: 'Random Booster Shelter Drake Select', releaseDate: '15 ก.พ. 2025' },
-    { code: 'BX-40', name: 'Winder Launcher L', releaseDate: '29 มี.ค. 2025' },
-    { code: 'BX-41', name: 'Rubber Custom Grip (Gunmetal Ver.)', releaseDate: '29 มี.ค. 2025' },
-    { code: 'BX-42', name: 'Rubber Custom Grip (Blue Ver.)', releaseDate: '29 มี.ค. 2025' },
-    { code: 'BX-43', name: 'Gear Case (White Ver.)', releaseDate: '29 มี.ค. 2025' },
-    { code: 'BX-44', name: 'Tricera Press M-85BS', releaseDate: '28 มิ.ย. 2025' },
-    { code: 'BX-45', name: 'Samurai Calibur 6-70M', releaseDate: '9 ส.ค. 2025' },
-    { code: 'BX-46', name: 'Battle Entry Set Infinity', releaseDate: '11 ต.ค. 2025' },
-].map((p, i) => toProduct('basic', i, p));
+export const BASIC_LINE: Product[] = BX_CATALOG.map((entry, index) => {
+    const combo = entry.ratchet && entry.bit ? ` ${entry.ratchet}${entry.bit}` : '';
+    const variant = entry.variant ? ` (${entry.variant})` : '';
+    return {
+        code: entry.code,
+        name: `${entry.name}${combo}${variant}`,
+        releaseDate: '—',
+        note: entry.variant ?? undefined,
+        image: `/products/BX/${entry.file}`,
+        slug: `basic-${index}`,
+    };
+});
 
 export const UNIQUE_LINE: Product[] = [
     { code: 'UX-01', name: 'Dran Buster 1-60A', releaseDate: '30 มี.ค. 2024' },

@@ -61,16 +61,29 @@ function ProductCard({ product }: { product: Product }) {
                     {product.name}
                 </div>
                 {details.blade ? (
-                    <div className="mt-auto flex items-center gap-1.5 text-xs text-yellow-400 font-bold pt-1 border-t border-slate-800">
-                        <Weight className="w-3.5 h-3.5" />
-                        {details.blade.weight !== null ? `${details.blade.weight} g` : 'เบลด'}
-                        {details.ratchet && details.ratchet.weight !== null && (
-                            <span className="text-slate-500 font-medium">+ {details.ratchet.weight} g</span>
-                        )}
-                        {details.bit && details.bit.weight !== null && (
-                            <span className="text-slate-500 font-medium">+ {details.bit.weight} g</span>
-                        )}
-                    </div>
+                    <>
+                        <div className="flex flex-wrap gap-1 text-[10px] font-bold">
+                            <span className="rounded border border-cyan-800/40 bg-cyan-950/40 px-1.5 py-0.5 text-cyan-300">
+                                Blade: {details.blade.name}
+                            </span>
+                            <span className="rounded border border-blue-800/40 bg-blue-950/40 px-1.5 py-0.5 text-blue-300">
+                                Ratchet: {details.ratchet?.name ?? '—'}
+                            </span>
+                            <span className="rounded border border-emerald-800/40 bg-emerald-950/40 px-1.5 py-0.5 text-emerald-300">
+                                Bit: {details.bit?.name ?? '—'}
+                            </span>
+                        </div>
+                        <div className="mt-auto flex items-center gap-1.5 text-xs text-yellow-400 font-bold pt-1 border-t border-slate-800">
+                            <Weight className="w-3.5 h-3.5" />
+                            {details.blade.weight !== null ? `${details.blade.weight} g` : 'เบลด'}
+                            {details.ratchet && details.ratchet.weight !== null && (
+                                <span className="text-slate-500 font-medium">+ {details.ratchet.weight} g</span>
+                            )}
+                            {details.bit && details.bit.weight !== null && (
+                                <span className="text-slate-500 font-medium">+ {details.bit.weight} g</span>
+                            )}
+                        </div>
+                    </>
                 ) : (
                     <div className="mt-auto text-xs text-slate-600 pt-1 border-t border-slate-800">อุปกรณ์/เซ็ต</div>
                 )}
@@ -207,7 +220,11 @@ export default function ProductsPage() {
                         color="bg-cyan-950/60"
                     />
                     <p className="text-xs text-slate-500 mb-6">
-                        สายหลักของ Beyblade X เปิดตัวเมื่อ 15 ก.ค. 2566 — รวมทั้ง Beyblade, Stadium, Launcher และ Accessory
+                        สายหลักของ Beyblade X — แสดงรหัสสินค้า + ชื่อ Blade + Ratchet + Bit ครบทั้ง {BASIC_LINE.length} รายการตาม{' '}
+                        <code className="rounded bg-slate-800 px-1 text-slate-400">public/products/BX/readme.md</code>{' '}
+                        <Link href="/wiki/blades" className="font-bold text-cyan-400 hover:text-cyan-300">
+                            ดูรายการ Blade ทั้งหมด →
+                        </Link>
                     </p>
                     <ProductCardGrid products={BASIC_LINE} />
                 </section>

@@ -81,6 +81,29 @@ function BladeCard({ blade, onPreview }: { blade: BladeEntry; onPreview: (blade:
                     </span>
                 </div>
 
+                {(blade.ratchet || blade.bit || blade.productSlug) && (
+                    <div className="flex flex-wrap items-center gap-1 text-[10px] font-bold">
+                        {blade.ratchet && (
+                            <span className="rounded border border-blue-800/40 bg-blue-950/40 px-1.5 py-0.5 text-blue-300">
+                                Ratchet {blade.ratchet}
+                            </span>
+                        )}
+                        {blade.bit && (
+                            <span className="rounded border border-emerald-800/40 bg-emerald-950/40 px-1.5 py-0.5 text-emerald-300">
+                                Bit {blade.bit}
+                            </span>
+                        )}
+                        {blade.productSlug && (
+                            <Link
+                                href={`/wiki/products/${blade.productSlug}`}
+                                className="ml-auto text-cyan-400 hover:text-cyan-300"
+                            >
+                                ดูสินค้า →
+                            </Link>
+                        )}
+                    </div>
+                )}
+
                 {/* Stats */}
                 <div className="space-y-1 text-[10px]">
                     <div className="flex justify-between text-slate-500">
@@ -119,7 +142,7 @@ export default function BladesPage() {
         .filter(b => {
             if (filterType   !== 'ALL' && b.type   !== filterType)   return false;
             if (filterSeries !== 'ALL' && b.series !== filterSeries) return false;
-            if (search && !b.name.toLowerCase().includes(search.toLowerCase())) return false;
+            if (search && !`${b.code ?? ''} ${b.name}`.toLowerCase().includes(search.toLowerCase())) return false;
             return true;
         })
         .sort((a, b) => {
@@ -183,7 +206,7 @@ export default function BladesPage() {
                 <div className="bg-[#121826] border border-slate-800 rounded-2xl p-4 space-y-3">
                     <input
                         type="text"
-                        placeholder="ค้นหา Blade… (เช่น Phoenix Wing, Wizard Rod)"
+                        placeholder="ค้นหา Blade… (เช่น BX-01, Phoenix Wing, Wizard Rod)"
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                         className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-cyan-400 transition-all"
@@ -354,13 +377,21 @@ export default function BladesPage() {
                                         </div>
                                     </div>
                                 )}
-                                <div className="pt-2">
+                                <div className="flex flex-wrap items-center gap-4 pt-2">
                                     <Link
                                         href={`/wiki/blade/${selectedBlade.id}`}
                                         className="inline-flex items-center gap-1.5 text-sm font-bold text-cyan-400 hover:text-cyan-300 transition-colors"
                                     >
                                         อ่านบทวิเคราะห์เต็ม →
                                     </Link>
+                                    {selectedBlade.productSlug && (
+                                        <Link
+                                            href={`/wiki/products/${selectedBlade.productSlug}`}
+                                            className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-400 hover:text-white transition-colors"
+                                        >
+                                            ดูสินค้าในรหัสนี้ →
+                                        </Link>
+                                    )}
                                 </div>
                             </div>
                         </div>
