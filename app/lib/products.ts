@@ -171,22 +171,9 @@ export const CUSTOM_LINE: Product[] = [
     { code: 'CX-14', name: 'Knight Fortress GV8-70UN', releaseDate: '28 มี.ค. 2026' },
 ].map((p, i) => toProduct('custom', i, p));
 
-export const SPECIAL_LINE: Product[] = [
-    { code: 'BXG-01', name: 'Dranzer Spiral 3-80T', releaseDate: '15 ก.ค. 2023' },
-].map((p, i) => toProduct('special', i, p));
+export const SPECIAL_LINE: Product[] = [];
 
 export const EVENT_LINE: Product[] = [
-    { code: 'BX-01', name: 'Dran Sword 3-60F (Starter)', releaseDate: '10 มิ.ย. 2023', note: 'CoroCoro Spirit Festival' },
-    { code: 'BX-02', name: 'Hells Scythe 4-60T (Starter)', releaseDate: '10 มิ.ย. 2023', note: 'CoroCoro Spirit Festival' },
-    { code: 'BX-00', name: 'Cobalt Drake 4-60F (Blue)', releaseDate: 'ก.ย. 2023', note: 'Rare Bey Get Battle' },
-    { code: 'BX-00', name: 'Hells Scythe 4-60T (Gold)', releaseDate: 'ก.ย. 2023', note: 'Rare Bey Get Battle' },
-    { code: 'BX-00', name: 'Knight Shield 3-80N (Gold)', releaseDate: '2023', note: 'Beyblade Battle Base Tournament Prize' },
-    { code: 'BX-23', name: 'Phoenix Wing 9-60GF (Starter)', releaseDate: '10 ธ.ค. 2023', note: "Toys R' Us" },
-    { code: 'BX-00', name: 'Phoenix Feather 3-60F', releaseDate: 'ม.ค. 2024', note: 'CoroCoro Comic' },
-    { code: 'BX-00', name: 'Hells Scythe 3-80F (SP X Bey)', releaseDate: '27 ม.ค. 2024', note: 'CoroCoro Comic' },
-    { code: 'BX-00', name: 'Dran Sword 3-60F (Sushiro Ver.)', releaseDate: '14 ก.พ. 2024', note: 'Sushiro Hong Kong Exclusive' },
-    { code: 'BX-00', name: 'Leon Claw 5-60P (Metal Coat: Gold)', releaseDate: '22 ก.พ. 2024', note: 'Limited' },
-    { code: 'BX-00', name: 'Shark Edge 5-60GF (Metal Coat: Blue)', releaseDate: '23 มี.ค. 2024', note: 'Limited' },
     { code: 'UX-00', name: 'Wyvern Hover 2-80GN', releaseDate: '24 ต.ค. 2025', note: 'Event' },
     { code: 'UX-00', name: 'Orochi Cluster 6-60LF', releaseDate: '21 ม.ค. 2026', note: 'Event' },
 ].map((p, i) => toProduct('event', i, p));
@@ -202,17 +189,6 @@ export const ALL_PRODUCTS: Product[] = [
 export function getProductBySlug(slug: string): Product | undefined {
     return ALL_PRODUCTS.find((p) => p.slug === slug);
 }
-
-const BX_BLADE_IMAGES: string[] = [
-    'Bear Scratch', 'Black Shell', 'Cobalt Dragoon', 'Cobalt Drake', 'Crimson Garuda', 'Croc Crunch',
-    'Dragoon Storm', 'Dran Dagger', 'Dran Strike', 'Dran Sword', 'Dranzer Spiral', 'Driger S',
-    'Hells Chain', 'Hells Scythe', 'Knight Lance', 'Knight Shield', 'Leon Claw',
-    'Lightning L-Drago (Rapid Hit)', 'Lightning L-Drago (Upper)',
-    'Mammoth Tusk', 'Phoenix Feather', 'Phoenix Wing', 'Ptera Swing', 'Rhino Horn',
-    'Samurai Calibur', 'Shark Edge', 'Shelter Drake', 'Shinobi Knife', 'Sphinx Cowl',
-    'Storm Pegasis', 'Tricera Press', 'Unicorn Sting', 'Victory Valkyrie', 'Viper Tail',
-    'Weiss Tiger', 'Whale Wave', 'Wizard Arrow', 'Wyvern Gale', 'Xeno Xcalibur',
-];
 
 const UX_BLADE_IMAGES: string[] = [
     'Aero Pegasus', 'Bullet Griffon', 'Clock Mirage', 'Dran Buster', 'Ghost Circle',

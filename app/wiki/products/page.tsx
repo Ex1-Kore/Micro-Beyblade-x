@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronRight, Package, Star, Layers, Zap, Trophy, Weight } from 'lucide-react';
-import { BASIC_LINE, UNIQUE_LINE, CUSTOM_LINE, SPECIAL_LINE, EVENT_LINE, getProductDetails, getProductImgPath } from '../../lib/products';
+import { BASIC_LINE, UNIQUE_LINE, CUSTOM_LINE, EVENT_LINE, getProductDetails, getProductImgPath } from '../../lib/products';
 import type { Product } from '../../lib/products';
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -145,7 +145,7 @@ function ProductTable({ products, showNote = false }: { products: Product[]; sho
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function ProductsPage() {
-    const totalProducts = BASIC_LINE.length + UNIQUE_LINE.length + CUSTOM_LINE.length + SPECIAL_LINE.length + EVENT_LINE.length;
+    const totalProducts = BASIC_LINE.length + UNIQUE_LINE.length + CUSTOM_LINE.length + EVENT_LINE.length;
 
     return (
         <div className="min-h-screen bg-[#090d16] text-slate-100 font-sans">
@@ -183,7 +183,7 @@ export default function ProductsPage() {
                             { label: 'Basic Line', count: BASIC_LINE.length, color: 'text-cyan-400' },
                             { label: 'Unique Line', count: UNIQUE_LINE.length, color: 'text-amber-400' },
                             { label: 'Custom Line', count: CUSTOM_LINE.length, color: 'text-violet-400' },
-                            { label: 'Event', count: EVENT_LINE.length, color: 'text-rose-400' },
+                            { label: 'Event (UX)', count: EVENT_LINE.length, color: 'text-rose-400' },
                             { label: 'รวมทั้งหมด', count: totalProducts, color: 'text-white' },
                         ].map(item => (
                             <div key={item.label} className="bg-slate-800/60 border border-slate-700 rounded-xl px-4 py-2 text-center">
@@ -201,7 +201,6 @@ export default function ProductsPage() {
                         ['#basic', 'Basic Line (BX)'],
                         ['#unique', 'Unique Line (UX)'],
                         ['#custom', 'Custom Line (CX)'],
-                        ['#special', 'Special (BXG)'],
                         ['#event', 'Event Limited'],
                     ].map(([href, label]) => (
                         <a key={href} href={href}
@@ -255,20 +254,6 @@ export default function ProductsPage() {
                         ระบบ 4-5 ชิ้น มี Sub-Blade / Assist Blade สลับได้ — ปรับค่า Inertia Factor ได้ละเอียดสูงสุด เริ่มวางจำหน่าย มี.ค. 2568
                     </p>
                     <ProductCardGrid products={CUSTOM_LINE} />
-                </section>
-
-                {/* Special */}
-                <section id="special" className="bg-gradient-to-br from-slate-800/30 to-slate-900/50 border border-slate-700/50 rounded-3xl p-8 backdrop-blur-sm shadow-lg shadow-slate-950/30">
-                    <SectionTitle
-                        icon={<Star className="w-5 h-5 text-emerald-400" />}
-                        title="Special Releases (BXG)"
-                        count={SPECIAL_LINE.length}
-                        color="bg-emerald-950/60"
-                    />
-                    <p className="text-xs text-slate-500 mb-6">
-                        สินค้าพิเศษแยกซีรีส์ ไม่อยู่ใน BX/UX/CX ปกติ
-                    </p>
-                    <ProductCardGrid products={SPECIAL_LINE} />
                 </section>
 
                 {/* Event */}

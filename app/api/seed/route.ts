@@ -35,6 +35,12 @@ export async function POST() {
             });
         }
 
+        // prune BX blades ที่ไม่อยู่ใน readme 95 รายการ (ข้อมูลเก่าค้างจาก seed ก่อนหน้า)
+        const bxIds = PARTS_DB.BX.blades.map((b) => b.id);
+        await prisma.blade.deleteMany({
+            where: { series: 'BX', id: { notIn: bxIds } },
+        });
+
         // upsert ratchets
         for (const r of PARTS_DB.ratchets) {
             await prisma.ratchet.upsert({
