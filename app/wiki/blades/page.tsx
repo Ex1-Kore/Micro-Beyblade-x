@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronRight, Zap, Shield, RotateCw, Star } from 'lucide-react';
+import { ChevronRight, Star } from 'lucide-react';
 import { BLADES, type BladeEntry, type BladeType as BeyType, type BladeSeries as Series, AUTHORITATIVE_COUNTS, getBladeImagePath, estimateInertiaKgM2 } from '../../lib/blades-data';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -14,11 +14,11 @@ const TYPE_STYLE: Record<BeyType, string> = {
     Stamina: 'bg-emerald-950/60 text-emerald-400 border-emerald-800/40',
     Balance: 'bg-violet-950/60 text-violet-400 border-violet-800/40',
 };
-const TYPE_ICON: Record<BeyType, React.ReactNode> = {
-    Attack:  <Zap className="w-3 h-3" />,
-    Defense: <Shield className="w-3 h-3" />,
-    Stamina: <RotateCw className="w-3 h-3" />,
-    Balance: <Star className="w-3 h-3" />,
+const TYPE_IMG: Record<BeyType, string> = {
+    Attack:  '/products/TYPE/attack.png',
+    Defense: '/products/TYPE/defense.png',
+    Stamina: '/products/TYPE/stamina.png',
+    Balance: '/products/TYPE/balance.png',
 };
 const SERIES_STYLE: Record<Series, { text: string; border: string; bg: string }> = {
     BX: { text: 'text-cyan-400',   border: 'border-cyan-800/50',   bg: 'bg-cyan-950/40' },
@@ -77,7 +77,14 @@ function BladeCard({ blade, onPreview }: { blade: BladeEntry; onPreview: (blade:
                 <div className="flex items-start justify-between gap-1">
                     <div className="font-bold text-white text-sm leading-tight">{blade.code ? `${blade.code} ${blade.name}` : blade.name}</div>
                     <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border shrink-0 flex items-center gap-0.5 ${TYPE_STYLE[blade.type]}`}>
-                        {TYPE_ICON[blade.type]}{blade.type}
+                        <Image
+                            src={TYPE_IMG[blade.type]}
+                            alt=""
+                            width={14}
+                            height={14}
+                            className="w-3.5 h-3.5 object-contain"
+                        />
+                        {blade.type}
                     </span>
                 </div>
 

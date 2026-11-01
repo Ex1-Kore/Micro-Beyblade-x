@@ -41,7 +41,7 @@ export function FormulaCard({ symbol, name, formula, unit, explain, example }: {
     );
 }
 
-export function InfoBox({ color, title, children }: { color: string; title: string; children: React.ReactNode }) {
+export function InfoBox({ color, title, icon, children }: { color: string; title: string; icon?: React.ReactNode; children: React.ReactNode }) {
     const styles: Record<string, string> = {
         blue:   'bg-sky-950/40 border-sky-800/50 text-sky-300',
         amber:  'bg-amber-950/40 border-amber-800/50 text-amber-300',
@@ -51,7 +51,10 @@ export function InfoBox({ color, title, children }: { color: string; title: stri
     };
     return (
         <div className={`border rounded-xl p-4 text-sm leading-relaxed ${styles[color] ?? styles['blue']}`}>
-            <div className="font-bold mb-1">{title}</div>
+            <div className="font-bold mb-1 flex items-center gap-2">
+                {icon && <span className="shrink-0">{icon}</span>}
+                <span>{title}</span>
+            </div>
             {children}
         </div>
     );
