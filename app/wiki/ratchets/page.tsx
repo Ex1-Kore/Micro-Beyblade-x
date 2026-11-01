@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight, Layers } from 'lucide-react';
+import { PARTS_DB } from '../../lib/parts-db';
+import type { RatchetPart } from '../../lib/types';
 
 interface RatchetEntry {
     code: string;
@@ -16,33 +18,15 @@ interface RatchetEntry {
     img: string | null;
 }
 
-const RATCHETS: RatchetEntry[] = [
-    // ── Basic Line ──────────────────────────────────────────────────────────
-    { code: 'BX-01', name: '3-60', sides: 3, heightMm: 6.0, series: 'BX', img: '3-60', desc: 'ยอดนิยมตลอดกาล สมดุลดีทุกสาย ทน Burst ดี' },
-    { code: 'BX-02', name: '4-60', sides: 4, heightMm: 6.0, series: 'BX', img: '4-60', desc: '4 แฉก ทรงสี่เหลี่ยม เพิ่มมุมปะทะรอบด้าน' },
-    { code: 'BX-03', name: '4-80', sides: 4, heightMm: 8.0, series: 'BX', img: '4-80', desc: '4 แฉก สูง 8mm ป้องกันและ Stamina สูง' },
-    { code: 'BX-04', name: '3-80', sides: 3, heightMm: 8.0, series: 'BX', img: '3-80', desc: '3 แฉก สูง 8mm มุมกดจากด้านบนสูง' },
-    { code: 'BX-15', name: '5-60', sides: 5, heightMm: 6.0, series: 'BX', img: '5-60', desc: '5 แฉก หมุนนิ่ง เหมาะ Stamina/Defense' },
-    { code: 'BX-16', name: '5-80', sides: 5, heightMm: 8.0, series: 'BX', img: '5-80', desc: '5 แฉก สูง 8mm Defense+Stamina ยอดเยี่ยม' },
-    { code: 'BX-23', name: '9-60', sides: 9, heightMm: 6.0, series: 'BX', img: '9-60', desc: '9 แฉก เล็กถี่ ลดมุมปะทะ ป้องกันและหมุนนานสุด' },
-    { code: 'BX-27', name: '9-80', sides: 9, heightMm: 8.0, series: 'BX', img: '9-80', desc: '9 แฉก สูง 8mm Stamina Meta สูงสุด' },
-    { code: 'BX-00', name: '2-80', sides: 2, heightMm: 8.0, series: 'BX', img: '2-80', desc: '2 แฉก สูง 8mm กระแทกมุมบนแรงสูง' },
-    { code: 'BX-31', name: '4-70', sides: 4, heightMm: 7.0, series: 'BX', img: '4-70', desc: '4 แฉก สูง 7mm สมดุลดี โจมตีและป้องกัน' },
-    { code: 'BX-34', name: '2-60', sides: 2, heightMm: 6.0, series: 'BX', img: '2-60', desc: '2 แฉก สมมาตร 180° โจมตีไว' },
-    // ── Unique Line ─────────────────────────────────────────────────────────
-    { code: 'UX-01', name: '1-60', sides: 1, heightMm: 6.0, series: 'UX', img: '1-60', desc: '1 แฉก น้ำหนักเอียงสร้างแรงเหวี่ยง ชนแรงระเบิด เสี่ยง Burst สูง' },
-    { code: 'UX-02', name: '3-70', sides: 3, heightMm: 7.0, series: 'UX', img: '3-70', desc: '3 แฉก สูง 7mm ปรับมุมโจมตีจากด้านบน' },
-    { code: 'UX-03', name: '5-70', sides: 5, heightMm: 7.0, series: 'UX', img: '5-70', desc: '5 แฉก สูง 7mm เพิ่มเสถียรภาพ Stamina' },
-    { code: 'UX-05', name: '1-80', sides: 1, heightMm: 8.0, series: 'UX', img: '1-80', desc: '1 แฉก สูง 8mm แรงกระแทกมุมบนสูงสุด' },
-    { code: 'UX-06', name: '7-60', sides: 7, heightMm: 6.0, series: 'UX', img: '7-60', desc: '7 แฉก เพิ่มน้ำหนักรอบนอก Stamina ดี' },
-    { code: 'UX-07', name: '9-70', sides: 9, heightMm: 7.0, series: 'UX', img: '9-70', desc: '9 แฉก สูง 7mm กระจายน้ำหนักสม่ำเสมอ Stamina Meta' },
-    { code: 'UX-09', name: '2-70', sides: 2, heightMm: 7.0, series: 'UX', img: '2-70', desc: '2 แฉก สูง 7mm เพิ่มมุมกด Balance ดี' },
-    { code: 'UX-10', name: '3-85', sides: 3, heightMm: 8.5, series: 'UX', img: '3-85', desc: '3 แฉก สูง 8.5mm สูงที่สุดในสาย 3 แฉก' },
-    { code: 'UX-12', name: '0-80', sides: 0, heightMm: 8.0, series: 'UX', img: '0-80', desc: 'ไม่มีแฉก ทรงกลมสมบูรณ์ Stamina และทน Burst สูงสุด' },
-    { code: 'UX-16', name: '7-70', sides: 7, heightMm: 7.0, series: 'UX', img: '7-70', desc: '7 แฉก สูง 7mm สมดุลสูง Stamina ดี' },
-    // ── Custom Line ─────────────────────────────────────────────────────────
-    { code: 'CX-03', name: '6-80', sides: 6, heightMm: 8.0, series: 'CX', img: null, desc: '6 แฉก สูง 8mm Stamina+Defense สูงมาก' },
-];
+const RATCHETS: RatchetEntry[] = PARTS_DB.ratchets.map((r: RatchetPart) => ({
+    code: r.id,
+    name: r.name,
+    sides: r.sides,
+    heightMm: r.height,
+    series: 'BX',
+    desc: r.desc,
+    img: r.img ?? null,
+}));
 
 // Detailed ratchet mechanical/spec taxonomy (updated 2026)
 type RatchetSpecEntry = {
@@ -128,7 +112,7 @@ function RatchetCard({ r }: { r: RatchetEntry }) {
             <div className="relative bg-slate-950 flex items-center justify-center h-36">
                 {r.img ? (
                     <Image
-                        src={`/ratchet/ratchets/${r.img}.png`}
+                        src={`/products/RATCHETS/${r.img}.png`}
                         alt={r.name}
                         width={110}
                         height={110}
