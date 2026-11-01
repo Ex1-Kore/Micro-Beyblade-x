@@ -7,6 +7,7 @@ export type BladeSeriesType = 'BX' | 'UX' | 'CX';
 export interface BladePart {
     id: string;
     name: string;
+    code?: string;
     weight: number;
     atk: number;
     def: number;
