@@ -11,13 +11,13 @@ interface BitEntry {
     code?: string;
     abbr: string;
     name: string;
-    series?: 'BX' | 'UX' | 'CX';
     type: 'Attack' | 'Stamina' | 'Defense' | 'Balance';
     desc: string;
-    img: string | null;
+    img: string;
 }
 
-const BITS: BitEntry[] = PARTS_DB.bits.map((b: BitPart) => {
+// แสดงเฉพาะ Bit ที่มีไฟล์รูปใน public/products/BITS/ ตาม readme.md (25 รายการ)
+const BITS: BitEntry[] = PARTS_DB.bits.filter((b: BitPart): b is BitPart & { img: string } => Boolean(b.img)).map((b: BitPart & { img: string }) => {
     const m = b.name.match(/\(([^)]+)\)/);
     const name = m ? m[1] : b.name;
     return {
@@ -25,7 +25,7 @@ const BITS: BitEntry[] = PARTS_DB.bits.map((b: BitPart) => {
         name,
         type: b.type as BitEntry['type'],
         desc: b.desc,
-        img: b.img ?? null,
+        img: b.img,
     };
 });
 
@@ -43,12 +43,7 @@ const TYPE_GLOW: Record<string, string> = {
     Balance: 'shadow-violet-900/40',
 };
 
-const SERIES_LABEL: Record<string, string> = {
-    BX: 'Basic Line', UX: 'Unique Line', CX: 'Custom Line',
-};
-
 type FilterType = 'ALL' | 'Attack' | 'Stamina' | 'Defense' | 'Balance';
-type FilterSeries = 'ALL' | 'BX' | 'UX' | 'CX';
 
 function BitCard({ bit }: { bit: BitEntry }) {
     return (
@@ -81,7 +76,6 @@ function BitCard({ bit }: { bit: BitEntry }) {
                     </span>
                 </div>
                 <p className="text-xs text-slate-500 leading-relaxed">{bit.desc}</p>
-                {bit.series && <div className="text-[10px] text-slate-700">{SERIES_LABEL[bit.series]}</div>}
             </div>
         </div>
     );
@@ -89,12 +83,10 @@ function BitCard({ bit }: { bit: BitEntry }) {
 
 export default function BitsPage() {
     const [filterType, setFilterType] = useState<FilterType>('ALL');
-    const [filterSeries, setFilterSeries] = useState<FilterSeries>('ALL');
     const [search, setSearch] = useState('');
 
     const filtered = BITS.filter(b => {
         if (filterType !== 'ALL' && b.type !== filterType) return false;
-        if (filterSeries !== 'ALL' && b.series !== filterSeries) return false;
         if (search && !b.name.toLowerCase().includes(search.toLowerCase()) &&
             !b.abbr.toLowerCase().includes(search.toLowerCase())) return false;
         return true;
@@ -120,7 +112,7 @@ export default function BitsPage() {
             <main className="max-w-6xl mx-auto px-4 py-10 space-y-8">
                 <div className="text-center space-y-2">
                     <h1 className="text-4xl font-black text-white">รายการ <span className="text-amber-400">Bit</span> ทั้งหมด <span className="text-slate-500 text-xl">(จำแนกตามสาย)</span></h1>
-                    <p className="text-slate-400 text-sm">Bit คือชิ้นส่วนปลายแกนล่าง — ดูรูปเพื่อจำชื่อ/เลือใช้ได้เร็วขึ้น</p>
+                    <p className="text-slate-400 text-sm">Bit คือชิ้นส่วนปลายแกนล่าง — ครบ 25 รายการตาม <code className="rounded bg-slate-800 px-1 text-slate-300">public/products/BITS/readme.md</code></p>
                     <div className="flex justify-center gap-3 pt-1 flex-wrap">
                         {(['Attack','Stamina','Defense','Balance'] as const).map(t => (
                             <div key={t} className={`px-3 py-1.5 rounded-xl border text-xs font-bold ${TYPE_STYLE[t]}`}>
@@ -150,14 +142,6 @@ export default function BitsPage() {
                                     }`}>{t === 'ALL' ? 'ทุกสาย' : t}</button>
                             ))}
                         </div>
-                        <div className="flex flex-wrap gap-1.5 ml-auto">
-                            {(['ALL','BX','UX','CX'] as FilterSeries[]).map(s => (
-                                <button key={s} onClick={() => setFilterSeries(s)}
-                                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all border ${
-                                        filterSeries === s ? 'bg-cyan-400 text-black border-cyan-400' : 'bg-slate-800 text-slate-400 border-slate-700 hover:border-slate-500'
-                                    }`}>{s === 'ALL' ? 'ทุกซีรีส์' : s}</button>
-                            ))}
-                        </div>
                     </div>
                     <div className="text-xs text-slate-500">แสดง {filtered.length} / {BITS.length} Bit</div>
                 </div>
@@ -182,7 +166,7 @@ export default function BitsPage() {
                 )}
 
                 <div className="text-center text-xs text-slate-700 py-4">
-                    ข้อมูลอ้างอิงจาก Takara Tomy Beyblade X / BeyBuilder X (Fabel) • รูปจาก `public/products/BITS/` • บางรายการยังไม่มีรูปภาพ (แสดงอักษรย่อแทน)
+                    ข้อมูลอ้างอิงจาก Takara Tomy Beyblade X / BeyBuilder X (Fabel) • รูปทั้งหมดจาก `public/products/BITS/` • แสดงเฉพาะรายการที่มีรูปตาม readme.md
                 </div>
             </main>
 
