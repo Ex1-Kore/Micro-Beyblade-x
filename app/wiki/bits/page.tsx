@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronRight, Zap } from 'lucide-react';
+import { ChevronRight, X, Zap } from 'lucide-react';
 import { PARTS_DB } from '../../lib/parts-db';
 import type { BitPart } from '../../lib/types';
 
@@ -14,6 +14,13 @@ interface BitEntry {
     type: 'Attack' | 'Stamina' | 'Defense' | 'Balance';
     desc: string;
     img: string;
+    weight: number;
+    speed: number;
+    atk: number;
+    def: number;
+    sta: number;
+    bst: number;
+    burstResist: number;
 }
 
 // แสดงเฉพาะ Bit ที่มีไฟล์รูปใน public/products/BITS/ ตาม readme.md (25 รายการ)
@@ -26,6 +33,13 @@ const BITS: BitEntry[] = PARTS_DB.bits.filter((b: BitPart): b is BitPart & { img
         type: b.type as BitEntry['type'],
         desc: b.desc,
         img: b.img,
+        weight: b.weight,
+        speed: b.speed,
+        atk: b.atk,
+        def: b.def,
+        sta: b.sta,
+        bst: b.bst,
+        burstResist: b.burstResist,
     };
 });
 
@@ -43,39 +57,241 @@ const TYPE_GLOW: Record<string, string> = {
     Balance: 'shadow-violet-900/40',
 };
 
+const TYPE_IMG: Record<BitEntry['type'], string> = {
+    Attack:  '/products/TYPE/attack.png',
+    Stamina: '/products/TYPE/stamina.png',
+    Defense: '/products/TYPE/defense.png',
+    Balance: '/products/TYPE/balance.png',
+};
+
 type FilterType = 'ALL' | 'Attack' | 'Stamina' | 'Defense' | 'Balance';
 
-function BitCard({ bit }: { bit: BitEntry }) {
+/** สรุปรูปแบบการเคลื่อนที่จากชนิดปลาย + ความเร็ว + คำอธิบายของ Bit */
+function movementText(bit: BitEntry): string {
+    const base = bit.desc.split('—')[0].trim();
+    if (bit.type === 'Attack') {
+        if (bit.speed >= 85) return `${base} — ออกตัวพุ่งเป็นวงกว้างแล้วเร่งเข้าหาคู่แข่งทันที`;
+        if (bit.speed >= 60) return `${base} — วิ่งเป็นวงและสลับเป็นแนวเข้าชนตามจังหวะ`;
+        return `${base} — เคลื่อนที่ระยะสั้น เน้นชนระยะประชิดมากกว่าวิ่งรอบสนาม`;
+    }
+    if (bit.type === 'Stamina') {
+        if (bit.speed <= 30) return `${base} — หมุนทรงตัวอยู่กับที่ วงหมุนแคบและสูญเสียพลังงานน้อย`;
+        return `${base} — ไถลเป็นวงแคบช้าๆ ก่อนทรงตัวเข้าสู่การหมุนนิ่ง`;
+    }
+    if (bit.type === 'Defense') {
+        if (bit.speed <= 25) return `${base} — ปักหลักกลางสนาม ขยับน้อยเมื่อรับแรงชน`;
+        return `${base} — ยึดพื้นที่และสไลด์รับแรงชนก่อนกลับเข้าศูนย์กลาง`;
+    }
+    if (bit.speed >= 60) return `${base} — ออกตัวเร็วในช่วงแรก แล้วค่อยๆ ทรงตัวเป็นการหมุนนิ่ง`;
+    return `${base} — เคลื่อนที่ผสมระหว่างไถลและหมุนนิ่งตามแรงเหวี่ยง`;
+}
+
+/** ข้อดี/ข้อเสีย สรุปจากสถิติใน PARTS_DB (ไม่ใช่ค่าที่เดาขึ้นใหม่) */
+function bitProfile(bit: BitEntry): { pros: string[]; cons: string[] } {
+    const pros: string[] = [];
+    const cons: string[] = [];
+
+    if (bit.speed >= 85) pros.push('ความเร็วออกตัวสูงมาก ใช้กดดันคู่แข่งได้ก่อน');
+    else if (bit.speed >= 65) pros.push('ออกตัวไว ใช้เปลี่ยนจังหวะได้ดี');
+    if (bit.atk >= 25) pros.push('พลังโจมตีสูง เหมาะกับการทำ Finish');
+    if (bit.def >= 30) pros.push('กันกระแทกได้ดี ตั้งรับแน่น');
+    if (bit.sta >= 30) pros.push('หมุนได้นาน เหมาะกับเกมยืดเยื้อ');
+    if (bit.bst >= 14) pros.push('ค่าสมดุลโดยรวมสูง');
+    if (bit.burstResist >= 3) pros.push('ทนทานต่อการ Burst');
+
+    if (bit.speed < 30) cons.push('ความเร็วต่ำ ตามเกมรุกของคู่แข่งได้ยาก');
+    else if (bit.speed < 50) cons.push('ความเร็วไม่สูง ต้องอาศัยจังหวะ');
+    if (bit.atk < 10) cons.push('พลังโจมตีน้อย');
+    if (bit.def < 15) cons.push('รับแรงชนได้จำกัด');
+    if (bit.sta < 15) cons.push('พลังการหมุนหมดไว');
+    if (bit.burstResist <= 1) cons.push('กัน Burst ได้น้อย');
+    if (bit.bst < 10) cons.push('ภาพรวมยังไม่โดดเด่น');
+
+    if (pros.length < 2) pros.push(bit.weight <= 2.2 ? 'น้ำหนักเบา ช่วยให้แกนหมุนคล่องตัว' : 'น้ำหนักช่วยเพิ่มแรงเฉื่อยในการหมุน');
+    if (cons.length < 2) cons.push(bit.weight <= 2.2 ? 'น้ำหนักเบา จึงถูกชนเคลื่อนที่ได้ง่าย' : 'น้ำหนักมาก อาจออกตัวช้ากว่า');
+
+    return { pros: pros.slice(0, 4), cons: cons.slice(0, 4) };
+}
+
+function StatBar({ label, value, color }: { label: string; value: number; color: string }) {
     return (
-        <div className={`bg-[#121826] border border-slate-800 rounded-2xl overflow-hidden hover:border-slate-600 transition-all hover:shadow-lg ${TYPE_GLOW[bit.type]} group`}>
-            <div className="relative bg-slate-950 flex items-center justify-center h-32 p-3">
-                {bit.img ? (
-                    <Image
-                        src={`/products/BITS/${bit.img}.png`}
-                        alt={bit.name}
-                        width={88} height={88}
-                        className="object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-300 max-h-24 w-auto"
-                    />
-                ) : (
-                    <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center text-2xl font-black text-slate-600">
-                        {bit.abbr}
-                    </div>
-                )}
+        <div className="flex items-center gap-2">
+            <span className="w-9 text-[10px] font-black text-slate-500">{label}</span>
+            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-800">
+                <div className={`h-full rounded-full ${color}`} style={{ width: `${Math.min(100, (value / 40) * 100)}%` }} />
+            </div>
+            <span className="w-6 text-right text-[11px] font-bold text-slate-300">{value}</span>
+        </div>
+    );
+}
+
+function Prop({ label, value }: { label: string; value: string }) {
+    return (
+        <div className="rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2">
+            <div className="text-[10px] text-slate-500">{label}</div>
+            <div className="text-sm font-bold text-white">{value}</div>
+        </div>
+    );
+}
+
+function BitCard({ bit, onSelect }: { bit: BitEntry; onSelect: (bit: BitEntry) => void }) {
+    return (
+        <button
+            type="button"
+            onClick={() => onSelect(bit)}
+            aria-label={`เปิดรายละเอียด ${bit.abbr} ${bit.name}`}
+            className={`group w-full cursor-pointer overflow-hidden rounded-2xl border border-slate-800 bg-[#121826] text-left transition-all hover:-translate-y-0.5 hover:border-slate-600 hover:shadow-lg ${TYPE_GLOW[bit.type]}`}
+        >
+            <div className="relative flex h-32 items-center justify-center bg-slate-950 p-3">
+                <Image
+                    src={`/products/BITS/${bit.img}.png`}
+                    alt={bit.name}
+                    width={88} height={88}
+                    className="max-h-24 w-auto object-contain drop-shadow-lg transition-transform duration-300 group-hover:scale-105"
+                />
                 {bit.code && (
-                    <span className="absolute top-2 left-2 text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-900/80 text-slate-400 border border-slate-700">{bit.code}</span>
+                    <span className="absolute left-2 top-2 rounded border border-slate-700 bg-slate-900/80 px-1.5 py-0.5 text-[10px] font-bold text-slate-400">{bit.code}</span>
                 )}
             </div>
-            <div className="p-3 space-y-2">
+            <div className="space-y-2 p-3">
                 <div className="flex items-center justify-between gap-1">
                     <div className="flex items-baseline gap-1.5">
-                        <span className="font-black text-white text-lg leading-none">{bit.abbr}</span>
-                        <span className="text-slate-400 text-xs">{bit.name}</span>
+                        <span className="text-lg font-black leading-none text-white">{bit.abbr}</span>
+                        <span className="text-xs text-slate-400">{bit.name}</span>
                     </div>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded border shrink-0 ${TYPE_STYLE[bit.type]}`}>
+                    <span className={`flex shrink-0 items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] font-bold ${TYPE_STYLE[bit.type]}`}>
+                        <Image
+                            src={TYPE_IMG[bit.type]}
+                            alt=""
+                            width={14}
+                            height={14}
+                            className="h-3.5 w-3.5 object-contain"
+                        />
                         {bit.type}
                     </span>
                 </div>
-                <p className="text-xs text-slate-500 leading-relaxed">{bit.desc}</p>
+                <p className="text-xs leading-relaxed text-slate-500">{bit.desc}</p>
+                <div className="text-[10px] text-slate-600 transition-colors group-hover:text-amber-400">คลิกเพื่อดูรายละเอียด →</div>
+            </div>
+        </button>
+    );
+}
+
+function BitDetail({ bit, onClose }: { bit: BitEntry; onClose: () => void }) {
+    const { pros, cons } = bitProfile(bit);
+
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+        document.addEventListener('keydown', onKey);
+        const prevOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.removeEventListener('keydown', onKey);
+            document.body.style.overflow = prevOverflow;
+        };
+    }, [onClose]);
+
+    return (
+        <div
+            className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`รายละเอียด ${bit.abbr} ${bit.name}`}
+            onClick={onClose}
+        >
+            <div
+                className="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-slate-700 bg-[#101725] shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <button
+                    type="button"
+                    onClick={onClose}
+                    aria-label="ปิดรายละเอียด"
+                    className="absolute right-3 top-3 z-10 rounded-lg border border-slate-700 bg-slate-900/80 p-1.5 text-slate-400 transition-colors hover:border-slate-500 hover:text-white"
+                >
+                    <X className="h-4 w-4" />
+                </button>
+
+                <div className="grid md:grid-cols-[240px_1fr]">
+                    <div className="flex flex-col items-center justify-center gap-3 border-b border-slate-800 bg-slate-950 p-6 md:border-b-0 md:border-r">
+                        <Image
+                            src={`/products/BITS/${bit.img}.png`}
+                            alt={bit.name}
+                            width={144} height={144}
+                            className="h-36 w-36 object-contain drop-shadow-2xl"
+                        />
+                        <span className={`flex items-center gap-1 rounded border px-2.5 py-1 text-xs font-bold ${TYPE_STYLE[bit.type]}`}>
+                            <Image
+                                src={TYPE_IMG[bit.type]}
+                                alt=""
+                                width={16}
+                                height={16}
+                                className="h-4 w-4 object-contain"
+                            />
+                            {bit.type}
+                        </span>
+                    </div>
+
+                    <div className="space-y-5 p-6">
+                        <div>
+                            <div className="text-3xl font-black leading-none text-white">{bit.abbr}</div>
+                            <div className="mt-1 text-sm text-slate-400">{bit.name}</div>
+                        </div>
+
+                        <p className="text-sm leading-relaxed text-slate-300">{bit.desc}</p>
+
+                        <div className="space-y-2">
+                            <h3 className="text-xs font-black text-slate-400">คุณสมบัติทางกายภาพ</h3>
+                            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                                <Prop label="น้ำหนัก" value={`${bit.weight} g`} />
+                                <Prop label="ความเร็ว" value={`${bit.speed}/100`} />
+                                <Prop label="Burst Resist" value={`${bit.burstResist}/5`} />
+                            </div>
+                            <div className="space-y-1.5 pt-1">
+                                <StatBar label="ATK" value={bit.atk} color="bg-rose-500" />
+                                <StatBar label="DEF" value={bit.def} color="bg-blue-500" />
+                                <StatBar label="STA" value={bit.sta} color="bg-emerald-500" />
+                                <StatBar label="BST" value={bit.bst} color="bg-violet-500" />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <h3 className="text-xs font-black text-slate-400">รูปแบบการเคลื่อนที่</h3>
+                            <p className="text-sm leading-relaxed text-slate-300">{movementText(bit)}</p>
+                        </div>
+
+                        <div className="grid gap-3 sm:grid-cols-2">
+                            <div className="rounded-xl border border-emerald-900/50 bg-emerald-950/20 p-3">
+                                <h3 className="mb-2 text-xs font-black text-emerald-400">ข้อดี</h3>
+                                <ul className="space-y-1.5">
+                                    {pros.map((p) => (
+                                        <li key={p} className="flex gap-2 text-xs leading-relaxed text-slate-300">
+                                            <span className="mt-0.5 shrink-0 text-emerald-400">+</span>
+                                            <span>{p}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div className="rounded-xl border border-rose-900/50 bg-rose-950/20 p-3">
+                                <h3 className="mb-2 text-xs font-black text-rose-400">ข้อเสีย</h3>
+                                <ul className="space-y-1.5">
+                                    {cons.map((c) => (
+                                        <li key={c} className="flex gap-2 text-xs leading-relaxed text-slate-300">
+                                            <span className="mt-0.5 shrink-0 text-rose-400">−</span>
+                                            <span>{c}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <p className="text-[11px] leading-relaxed text-slate-600">
+                            * ข้อดี/ข้อเสียสรุปจากการวิเคราะห์สถิติในระบบและลักษณะปลายตามคำอธิบายของ Bit
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -84,6 +300,7 @@ function BitCard({ bit }: { bit: BitEntry }) {
 export default function BitsPage() {
     const [filterType, setFilterType] = useState<FilterType>('ALL');
     const [search, setSearch] = useState('');
+    const [selected, setSelected] = useState<BitEntry | null>(null);
 
     const filtered = BITS.filter(b => {
         if (filterType !== 'ALL' && b.type !== filterType) return false;
@@ -156,7 +373,7 @@ export default function BitsPage() {
                                     <span className={`text-xs font-bold px-2 py-0.5 rounded border ${TYPE_STYLE[group.type]}`}>{group.items.length}</span>
                                 </div>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-                                    {group.items.map((bit, i) => <BitCard key={`${bit.abbr}-${i}`} bit={bit} />)}
+                                    {group.items.map((bit, i) => <BitCard key={`${bit.abbr}-${i}`} bit={bit} onSelect={setSelected} />)}
                                 </div>
                             </section>
                         ))}
@@ -173,6 +390,8 @@ export default function BitsPage() {
             <footer className="border-t border-slate-800 py-4 bg-slate-950 text-center text-xs text-slate-500">
                 Beyblade X Wiki ภาษาไทย • Bits Reference (จำแนกตามสาย)
             </footer>
+
+            {selected && <BitDetail bit={selected} onClose={() => setSelected(null)} />}
         </div>
     );
 }
