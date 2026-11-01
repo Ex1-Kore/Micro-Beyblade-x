@@ -182,7 +182,7 @@ export default function BitsPage() {
                 )}
 
                 <div className="text-center text-xs text-slate-700 py-4">
-                    ข้อมูลอ้างอิงจาก Takara Tomy Beyblade X / BeyBuilder X (Fabel) • รูปจาก `public/bit/bits/` • บางรายการยังไม่มีรูปภาพ (แสดงอักษรย่อแทน)
+                    ข้อมูลอ้างอิงจาก Takara Tomy Beyblade X / BeyBuilder X (Fabel) • รูปจาก `public/products/BITS/` • บางรายการยังไม่มีรูปภาพ (แสดงอักษรย่อแทน)
                 </div>
             </main>
 

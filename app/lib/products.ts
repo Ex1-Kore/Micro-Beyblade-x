@@ -213,18 +213,18 @@ export const SPECIAL_LINE: Product[] = [
 ].map((p, i) => toProduct('special', i, p));
 
 export const EVENT_LINE: Product[] = [
-    { code: 'BX-01', name: 'Dran Sword 3-60F (Starter)', releaseDate: '10 มิ.ย. 2023', note: 'CoroCoro Spirit Festival', image: '/blade/bx/Dran Sword.png' },
-    { code: 'BX-02', name: 'Hells Scythe 4-60T (Starter)', releaseDate: '10 มิ.ย. 2023', note: 'CoroCoro Spirit Festival', image: '/blade/bx/Hells Scythe.png' },
-    { code: 'BX-00', name: 'Cobalt Drake 4-60F (Blue)', releaseDate: 'ก.ย. 2023', note: 'Rare Bey Get Battle', image: '/blade/bx/Cobalt Drake.png' },
-    { code: 'BX-00', name: 'Hells Scythe 4-60T (Gold)', releaseDate: 'ก.ย. 2023', note: 'Rare Bey Get Battle', image: '/blade/bx/Hells Scythe.png' },
-    { code: 'BX-00', name: 'Knight Shield 3-80N (Gold)', releaseDate: '2023', note: 'Beyblade Battle Base Tournament Prize', image: '/blade/bx/Knight Shield.png' },
-    { code: 'BX-23', name: 'Phoenix Wing 9-60GF (Starter)', releaseDate: '10 ธ.ค. 2023', note: "Toys R' Us", image: '/blade/bx/Phoenix Wing.png' },
-    { code: 'BX-00', name: 'Phoenix Feather 3-60F', releaseDate: 'ม.ค. 2024', note: 'CoroCoro Comic', image: '/blade/bx/Phoenix Feather.png' },
-    { code: 'BX-00', name: 'Hells Scythe 3-80F (SP X Bey)', releaseDate: '27 ม.ค. 2024', note: 'CoroCoro Comic', image: '/blade/bx/Hells Scythe.png' },
-    { code: 'BX-00', name: 'Dran Sword 3-60F (Sushiro Ver.)', releaseDate: '14 ก.พ. 2024', note: 'Sushiro Hong Kong Exclusive', image: '/blade/bx/Dran Sword.png' },
-    { code: 'BX-00', name: 'Leon Claw 5-60P (Metal Coat: Gold)', releaseDate: '22 ก.พ. 2024', note: 'Limited', image: '/blade/bx/Leon Claw.png' },
-    { code: 'BX-00', name: 'Shark Edge 5-60GF (Metal Coat: Blue)', releaseDate: '23 มี.ค. 2024', note: 'Limited', image: '/blade/bx/Shark Edge.png' },
-    { code: 'UX-00', name: 'Wyvern Hover 2-80GN', releaseDate: '24 ต.ค. 2025', note: 'Event', image: '/blade/bx/Wyvern Gale.png' },
+    { code: 'BX-01', name: 'Dran Sword 3-60F (Starter)', releaseDate: '10 มิ.ย. 2023', note: 'CoroCoro Spirit Festival' },
+    { code: 'BX-02', name: 'Hells Scythe 4-60T (Starter)', releaseDate: '10 มิ.ย. 2023', note: 'CoroCoro Spirit Festival' },
+    { code: 'BX-00', name: 'Cobalt Drake 4-60F (Blue)', releaseDate: 'ก.ย. 2023', note: 'Rare Bey Get Battle' },
+    { code: 'BX-00', name: 'Hells Scythe 4-60T (Gold)', releaseDate: 'ก.ย. 2023', note: 'Rare Bey Get Battle' },
+    { code: 'BX-00', name: 'Knight Shield 3-80N (Gold)', releaseDate: '2023', note: 'Beyblade Battle Base Tournament Prize' },
+    { code: 'BX-23', name: 'Phoenix Wing 9-60GF (Starter)', releaseDate: '10 ธ.ค. 2023', note: "Toys R' Us" },
+    { code: 'BX-00', name: 'Phoenix Feather 3-60F', releaseDate: 'ม.ค. 2024', note: 'CoroCoro Comic' },
+    { code: 'BX-00', name: 'Hells Scythe 3-80F (SP X Bey)', releaseDate: '27 ม.ค. 2024', note: 'CoroCoro Comic' },
+    { code: 'BX-00', name: 'Dran Sword 3-60F (Sushiro Ver.)', releaseDate: '14 ก.พ. 2024', note: 'Sushiro Hong Kong Exclusive' },
+    { code: 'BX-00', name: 'Leon Claw 5-60P (Metal Coat: Gold)', releaseDate: '22 ก.พ. 2024', note: 'Limited' },
+    { code: 'BX-00', name: 'Shark Edge 5-60GF (Metal Coat: Blue)', releaseDate: '23 มี.ค. 2024', note: 'Limited' },
+    { code: 'UX-00', name: 'Wyvern Hover 2-80GN', releaseDate: '24 ต.ค. 2025', note: 'Event' },
     { code: 'UX-00', name: 'Orochi Cluster 6-60LF', releaseDate: '21 ม.ค. 2026', note: 'Event' },
 ].map((p, i) => toProduct('event', i, p));
 
@@ -263,22 +263,10 @@ const CX_BLADE_IMAGES: string[] = [
 ];
 
 const BLADE_IMAGE_DIRS: { set: Set<string>; dir: string }[] = [
-    { set: new Set(BX_BLADE_IMAGES), dir: 'bx' },
     { set: new Set(UX_BLADE_IMAGES), dir: 'ux' },
     { set: new Set(CX_BLADE_IMAGES), dir: 'cx' },
 ];
 
-const BLADE_IMAGE_OVERRIDES: Record<string, string> = {
-    'Samurai Steel': '/blade/bx/BX-00 Samurai Steel 5-70GF.png',
-};
-
-const PRODUCT_IMAGE_OVERRIDES: Record<string, string> = {
-    'BX-00': '/blade/bx/BX-00 Samurai Steel 5-70GF.png',
-    'BX-03': '/blade/bx/BX-03 Wizard Arrow 4-80B.png',
-    'BX-04': '/blade/bx/BX-04 Knight Shield 3-80N.png',
-    'BX-05': '/blade/bx/BX-05 Wizard Arrow 4-80B.png',
-    'BX-06': '/blade/bx/BX-06 Knight Shield 3-80N.png',
-};
 
 export function getBladeImgPath(bladeName: string, productCode?: string): string | null {
     // 1) ถ้ามี product code → หาไฟล์จาก public/products/<series>/ (BX ใช้ products/BX)

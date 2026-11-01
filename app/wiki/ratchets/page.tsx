@@ -14,7 +14,7 @@ interface RatchetEntry {
     heightMm: number;
     series: 'BX' | 'UX' | 'CX';
     desc: string;
-    /** ชื่อไฟล์ใน /public/ratchet/ (ไม่รวม .png) เช่น "3-60" */
+    /** ชื่อไฟล์ใน /public/products/RATCHETS/ (ไม่รวม .png) เช่น "3-60_p" */
     img: string | null;
 }
 
