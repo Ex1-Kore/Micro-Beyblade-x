@@ -113,7 +113,7 @@ export default function ComboBuilder({
                         className="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white font-medium focus:outline-none focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20 transition-all cursor-pointer backdrop-blur-sm hover:border-slate-600/50"
                     >
                         {PARTS_DB[system].blades.map((b: BladePart) => (
-                            <option key={b.id} value={b.id}>{b.name} ({b.weight}g)</option>
+                            <option key={b.id} value={b.id}>{b.code ? `${b.code} ${b.name}` : b.name} ({b.weight}g)</option>
                         ))}
                     </select>
                     <p className="text-xs text-slate-400 italic px-2 py-2 bg-slate-950/30 rounded-lg border border-slate-800/50">{selectedBlade.desc}</p>
