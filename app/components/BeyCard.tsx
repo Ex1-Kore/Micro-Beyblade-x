@@ -33,7 +33,7 @@ function getBladeImgPath(blade: BladePart): string | null {
         if (file) return `/products/BX/${encodeURIComponent(file)}`;
     }
     if (!blade.img) return null;
-    return `/blade/${blade.series.toLowerCase()}/${blade.img}.png`;
+    return `/blade/${blade.series.toLowerCase()}/${encodeURIComponent(blade.img)}.png`;
 }
 
 interface StatBarProps {

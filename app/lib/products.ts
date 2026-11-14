@@ -190,22 +190,14 @@ export function getProductBySlug(slug: string): Product | undefined {
     return ALL_PRODUCTS.find((p) => p.slug === slug);
 }
 
-const UX_BLADE_IMAGES: string[] = [
-    'Aero Pegasus', 'Bullet Griffon', 'Clock Mirage', 'Dran Buster', 'Ghost Circle',
-    'Golem Rock', 'Hells Hammer', 'Impact Drake', 'Knight Mail', 'Leon Crest',
-    'Meteor Dragoon', 'Mummy Curse', 'Phoenix Rudder', 'Samurai Saber', 'Shark Scale',
-    'Shinobi Shadow', 'Silver Wolf', 'Tyranno Beat', 'Wizard Rod',
-];
-
-const CX_BLADE_IMAGES: string[] = [
-    'Bahamut Blitz', 'Brachio Whip', 'Dran Brave',
-];
-
-const BLADE_IMAGE_DIRS: { set: Set<string>; dir: string }[] = [
-    { set: new Set(UX_BLADE_IMAGES), dir: 'ux' },
-    { set: new Set(CX_BLADE_IMAGES), dir: 'cx' },
-];
-
+/** ค้นหา BladePart ใน PARTS_DB จากชื่อ — ใช้สร้าง path รูป UX/CX จากชื่อไฟล์จริง */
+function findBladePartByName(bladeName: string): BladePart | null {
+    for (const series of ['UX', 'CX'] as const) {
+        const blade = PARTS_DB[series].blades.find((b) => b.name === bladeName);
+        if (blade) return blade;
+    }
+    return null;
+}
 
 export function getBladeImgPath(bladeName: string, productCode?: string): string | null {
     // 1) ถ้ามี product code → หาไฟล์จาก public/products/<series>/ (BX ใช้ products/BX)
@@ -216,9 +208,10 @@ export function getBladeImgPath(bladeName: string, productCode?: string): string
     // 2) BX: ใช้ map ไปยัง public/products/BX/
     const bxFile = BX_PRODUCT_IMAGE_MAP[bladeName];
     if (bxFile) return `/products/BX/${encodeURIComponent(bxFile)}`;
-    // 3) UX/CX: ใช้รูปเดิมใน /blade/<series>/
-    for (const { set, dir } of BLADE_IMAGE_DIRS) {
-        if (dir !== 'bx' && set.has(bladeName)) return `/blade/${dir}/${encodeURIComponent(bladeName)}.png`;
+    // 3) UX/CX: ใช้ชื่อไฟล์จริงจาก PARTS_DB → /blade/<series>/<img>.png
+    const blade = findBladePartByName(bladeName);
+    if (blade?.img) {
+        return `/blade/${blade.series.toLowerCase()}/${encodeURIComponent(blade.img)}.png`;
     }
     return null;
 }

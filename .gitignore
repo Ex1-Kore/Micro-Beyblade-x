@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -43,3 +44,6 @@ next-env.d.ts
 # local SQLite database (prod ใช้ volume ถาวรบน Coolify ที่ /app/data)
 prisma/dev.db
 prisma/dev.db-journal
+
+# สำรองรูปสินค้าเดิมก่อนจัดโครงสร้าง name-centric (ลบได้เมื่อตรวจแล้วว่าไม่ต้องใช้)
+/public/products/_backup-*/
