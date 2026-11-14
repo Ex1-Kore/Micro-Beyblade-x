@@ -4,7 +4,7 @@
  */
 import { NextResponse } from 'next/server';
 import prisma from '../../lib/prisma';
-import { PARTS_DB } from '../../lib/parts-db';
+import { PARTS_DB, BLADE_ID_ALIASES } from '../../lib/parts-db';
 import { isAdmin } from '../../lib/admin-auth';
 
 export async function POST() {
@@ -35,9 +35,22 @@ export async function POST() {
             });
         }
 
-        // prune BX blades ที่ไม่อยู่ใน readme 95 รายการ (ข้อมูลเก่าค้างจาก seed ก่อนหน้า)
+        // remap saved combos ก่อน prune: id ที่ถูกยุบ/ย้าย (re-release, Hasbro rename,
+        // ย้ายไป UX/CX) → id ที่ยังอยู่ใน PARTS_DB เพื่อไม่ให้ FK กับ Blade พัง
+        const liveBladeIds = new Set(allBlades.map((b) => b.id));
+        let remappedCombos = 0;
+        for (const [oldId, newId] of Object.entries(BLADE_ID_ALIASES)) {
+            if (oldId === newId || !liveBladeIds.has(newId)) continue;
+            const { count } = await prisma.savedCombo.updateMany({
+                where: { bladeId: oldId },
+                data: { bladeId: newId },
+            });
+            remappedCombos += count;
+        }
+
+        // prune BX blades ที่ไม่อยู่ใน PARTS_DB.BX.blades (ข้อมูลเก่าค้าง/ถูกยุบไปแล้ว)
         const bxIds = PARTS_DB.BX.blades.map((b) => b.id);
-        await prisma.blade.deleteMany({
+        const pruned = await prisma.blade.deleteMany({
             where: { series: 'BX', id: { notIn: bxIds } },
         });
 
@@ -47,11 +60,11 @@ export async function POST() {
                 where: { id: r.id },
                 update: {
                     name: r.name, height: r.height, sides: r.sides, weight: r.weight,
-                    atk: r.atk, def: r.def, sta: r.sta, bst: r.bst, desc: r.desc,
+                    atk: r.atk, def: r.def, sta: r.sta, desc: r.desc,
                 },
                 create: {
                     id: r.id, name: r.name, height: r.height, sides: r.sides, weight: r.weight,
-                    atk: r.atk, def: r.def, sta: r.sta, bst: r.bst, desc: r.desc,
+                    atk: r.atk, def: r.def, sta: r.sta, desc: r.desc,
                 },
             });
         }
@@ -62,12 +75,12 @@ export async function POST() {
                 where: { id: bt.id },
                 update: {
                     name: bt.name, type: bt.type, weight: bt.weight, speed: bt.speed,
-                    atk: bt.atk, def: bt.def, sta: bt.sta, bst: bt.bst,
+                    atk: bt.atk, def: bt.def, sta: bt.sta,
                     burstResist: bt.burstResist, desc: bt.desc,
                 },
                 create: {
                     id: bt.id, name: bt.name, type: bt.type, weight: bt.weight, speed: bt.speed,
-                    atk: bt.atk, def: bt.def, sta: bt.sta, bst: bt.bst,
+                    atk: bt.atk, def: bt.def, sta: bt.sta,
                     burstResist: bt.burstResist, desc: bt.desc,
                 },
             });
@@ -77,6 +90,8 @@ export async function POST() {
             blades:   allBlades.length,
             ratchets: PARTS_DB.ratchets.length,
             bits:     PARTS_DB.bits.length,
+            remappedCombos,
+            prunedBlades: pruned.count,
         };
 
         return NextResponse.json({ ok: true, seeded: counts });

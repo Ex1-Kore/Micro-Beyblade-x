@@ -1,5 +1,7 @@
-// AUTO-GENERATED from public/products/BX/readme.md — do not edit by hand.
-// One entry per BX product file (95). Single source of truth for BX blades.
+// Source data derived from public/products/BX/readme.md (one entry per BX product
+// file, 95). The generator script is not in this repo — treat this file as
+// hand-maintained: keep it in sync with readme.md and with the corrections in
+// app/lib/parts-db.ts (see BX_WEIGHT_FIX / BX_HASBRO_ALIAS).
 import type { BeyType } from './types';
 
 export interface BxCatalogEntry {
@@ -112,7 +114,7 @@ export const BX_CATALOG: BxCatalogEntry[] = [
     { id: 'CircleGhost', code: 'BX-50-04', name: 'Circle Ghost', file: 'BX-50-04_Circle_Ghost_M-85DS.png', ratchet: 'M-85', bit: 'DS', variant: null, type: 'Defense', weight: 0, atk: 0, def: 0, sta: 0, inertiaFactor: 1, color: 'from-violet-800 to-purple-900', desc: '⚠️ ยังไม่มีน้ำหนัก/สถิติ ATK/DEF/STA ตรวจสอบ — Circle Ghost (BX-50)' },
     { id: 'WolfFlameD', code: 'BX-50-05', name: 'Wolf Flame D', file: 'BX-50-05_Wolf_Flame_D_9-65L.png', ratchet: '9-65', bit: 'L', variant: null, type: 'Attack', weight: 0, atk: 0, def: 0, sta: 0, inertiaFactor: 1, color: 'from-slate-500 to-gray-700', desc: '⚠️ ยังไม่มีน้ำหนัก/สถิติ ATK/DEF/STA ตรวจสอบ — Wolf Flame D (BX-50)' },
     { id: 'CerberusReaperB', code: 'BX-50-06', name: 'Cerberus Reaper B', file: 'BX-50-06_Cerberus_Reaper_B_0-80WB.png', ratchet: '0-80', bit: 'WB', variant: null, type: 'Stamina', weight: 0, atk: 0, def: 0, sta: 0, inertiaFactor: 1, color: 'from-orange-600 to-red-800', desc: '⚠️ ยังไม่มีน้ำหนัก/สถิติ ATK/DEF/STA ตรวจสอบ — Cerberus Reaper B (BX-50)' },
-    { id: 'LusterDragoon', code: 'BX-52', name: 'Luster Dragoon', file: 'BX-52_Luster_Dragoon_6-60LC.png', ratchet: '6-60', bit: 'LC', variant: null, type: 'Attack', weight: 42.8, atk: 75, def: 15, sta: 10, inertiaFactor: 1, color: 'from-indigo-600 to-blue-900', desc: 'BX Expand Blade ซ้าย โจมตีสูง (BX-52) — ⚠️ k ยังไม่ตรวจสอบ' },
+    { id: 'LusterDragoon', code: 'BX-52', name: 'Luster Dragoon', file: 'BX-52_Luster_Dragoon_6-60LC.png', ratchet: '6-60', bit: 'LC', variant: null, type: 'Attack', weight: 42.8, atk: 75, def: 15, sta: 10, inertiaFactor: 1, color: 'from-indigo-600 to-blue-900', desc: 'BX Expand Blade ซ้าย โจมตีสูง (BX-52) — ⚠️ ยังไม่มีสถิติเกม ATK/DEF/STA ตรวจสอบ' },
     { id: 'AeroPegasus', code: 'BX-53-01', name: 'Aero Pegasus', file: 'BX-53-01_Aero_Pegasus_3-70A.png', ratchet: '3-70', bit: 'A', variant: null, type: 'Attack', weight: 0, atk: 0, def: 0, sta: 0, inertiaFactor: 1, color: 'from-sky-400 to-indigo-500', desc: '⚠️ ยังไม่มีน้ำหนัก/สถิติ ATK/DEF/STA ตรวจสอบ — Aero Pegasus (BX-53)' },
     { id: 'WizardArrow8', code: 'BX-53-02', name: 'Wizard Arrow', file: 'BX-53-02_Arrow_Wizard_4-80B_Version_2.0.png', ratchet: '4-80', bit: 'B', variant: 'Version 2.0', type: 'Stamina', weight: 31.9, atk: 35, def: 55, sta: 85, inertiaFactor: 1, color: 'from-yellow-500 to-emerald-500', desc: 'ทรงกลมมนขอบเฉียง ช่วยให้หมุนได้นานนิ่ง' },
     { id: 'HelmKnight5', code: 'BX-53-03', name: 'Helm Knight', file: 'BX-53-03_Helm_Knight_3-80N_Version_2.0.png', ratchet: '3-80', bit: 'N', variant: 'Version 2.0', type: 'Defense', weight: 0, atk: 0, def: 0, sta: 0, inertiaFactor: 1, color: 'from-blue-700 to-indigo-600', desc: '⚠️ ยังไม่มีน้ำหนัก/สถิติ ATK/DEF/STA ตรวจสอบ — Helm Knight (BX-08/14/20/53)' },

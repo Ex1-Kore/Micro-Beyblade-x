@@ -39,7 +39,8 @@ Micro-Beyblade-x/
 │   │   └── admin/             # login/logout + banners CRUD + wiki CRUD (cookie auth)
 │   ├── admin/                 # UI admin: login, banners, wiki
 │   ├── components/            # client components (ComboBuilder, PartsExplorer, ...)
-│   ├── lib/                   # types, parts-db, physics, prisma, products,
+│   ├── lib/                   # types, parts-db, bx-catalog, bx-product-images,
+│   │                          # blades-data, physics, prisma, products,
 │   │                          # banners, admin-auth, wiki, wiki-categories,
 │   │                          # wiki-input, safe-url, banner-input
 │   └── wiki/                  # หน้าวิกิแบบ static + [slug] แบบ dynamic
@@ -48,9 +49,10 @@ Micro-Beyblade-x/
 │   ├── dev.db                 # SQLite local (gitignored)
 │   └── migrations/            # init, add_banner, add_subblade_id, add_wiki_article_fields
 ├── public/
-│   ├── blade/{bx,ux,cx}/      # รูปเบลด (ชื่อไฟล์ไม่ตรงกับ img ใน parts-db → ดูข้อ 10)
+│   ├── blade/{bx,ux,cx}/      # รูปเบลดที่แอปใช้จริง (ชื่อไฟล์ไม่ตรงกับ img ใน parts-db → ดูข้อ 10)
 │   ├── bit/ ratchet/ mainblade/ overblade/ metalblade/ assistblade/ lockchip/
-│   ├── products/{bx,ux,cx}/   # รูปสินค้า (map ใน app/lib/products.ts)
+│   ├── products/BX/           # รูปสินค้า BX (ชื่อโฟลเดอร์ = รหัสสินค้า)
+│   ├── products/{UX,CX}/<TTid>/   # รูปสินค้า name-centric: <TTid>/<TTid>.png + _variants/ (ดูข้อ 10)
 │   └── data/beybuilder-parts.json   # ข้อมูลอ้างอิงจาก BeyBuilderX (GPL-2.0)
 ├── scripts/extract-beybuilder-parts.mjs
 ├── info/                      # ไฟล์อ้างอิง/ข้อมูลดิบ (ไม่ควร commit)
@@ -64,8 +66,8 @@ Micro-Beyblade-x/
 | Model | เนื้อหา |
 | --- | --- |
 | `Blade` | id, name, series (BX/UX/CX), weight, atk, def, sta, inertiaFactor, desc, color |
-| `Ratchet` | id, name, height (mm), sides, weight, atk, def, sta, bst, desc |
-| `Bit` | id, name, type (Attack/Defense/Stamina/Balance), weight, speed, atk, def, sta, bst, burstResist, desc |
+| `Ratchet` | id, name, height (mm), sides, weight, atk, def, sta, desc |
+| `Bit` | id, name, type (Attack/Defense/Stamina/Balance), weight, speed, atk, def, sta, burstResist, desc |
 | `SavedCombo` | คอมโบที่บันทึก + snapshot ฟิสิกส์ (rpm, linearSpeed, angleDeg, totalKE, impactForce, angularMomentum, burstRiskLevel) + `subBladeId?` (CX) |
 | `WikiArticle` | slug (unique), title, content (Markdown), category, status (draft/published), excerpt, coverImage, imageAlt, sortOrder |
 | `Banner` | position (top/wiki), title, imageUrl, targetUrl, network, alt, active, sortOrder, startsAt/endsAt, clickCount |
@@ -75,11 +77,19 @@ Micro-Beyblade-x/
 ## 4. ชุดข้อมูลชิ้นส่วน (`app/lib/parts-db.ts`)
 
 - const ภายในไฟล์ (ไม่ได้ export): `BX_BLADES`, `UX_BLADES`, `CX_BLADES`, `CX_SUBBLADES`, `RATCHETS`, `BITS`
-- export เดียว: `PARTS_DB` = `{ BX:{blades}, UX:{blades}, CX:{blades, subblades}, ratchets, bits }`
-- จำนวนปัจจุบัน: BX 39 · UX 23 · CX 3 · CX_SUB 3 · Ratchet 37 · Bit 54 (Attack 18 / Stamina 11 / Defense 10 / Balance 15) = **159 ชิ้น**
+- export: `PARTS_DB` = `{ BX:{blades}, UX:{blades}, CX:{blades, subblades}, ratchets, bits }` และ `BLADE_ID_ALIASES` (map id ที่ถูกยุบ/ย้าย → id ที่ยังอยู่ ใช้ remap `SavedCombo` ตอน seed)
+- จำนวนปัจจุบัน (ตรวจ 2026-11-14): **BX 36 · UX 29 · CX 34 · CX_SUB 3 · Ratchet 38 · Bit 56** (Attack 18 / Stamina 11 / Defense 11 / Balance 16) = **196 ชิ้น**
+- ฟิลด์ `bst` (Burst) ถูก **ลบออก** แล้ว (2026-11-14) — เป็นค่าที่ไม่มีข้อเท็จจริง (ไม่บนกล่อง, ไม่ใน Wiki) ใช้ `burstResist` (ค่าจริงจากกล่อง/Wiki) แทน
+- `BX_BLADES` สร้างจาก `BX_CATALOG` (95 = 1 entry ต่อ *ไฟล์สินค้า* รวม re-release/สี/Hasbro) แล้วยุบด้วย `bxCanonicalId()` (ตัดเลข re-release), `BX_HASBRO_ALIAS` (Helm Knight→Knight Shield, Scythe Incendio→Hells Scythe, Chain Incendio→Hells Chain, Lance Knight→Knight Lance, Soar Phoenix→Phoenix Wing, Tide Whale→Whale Wave) และ `BX_UX_CX_IDS` (BX-numbered product ที่บรรจุชิ้นส่วน UX/CX: Aero Pegasus/Impact Drake → UX, Circle Ghost→GhostCircle, Wand Wizard→WizardRod, Buster Dran→DranBuster, Wolf Flame D→WolfFlame, Cerberus Reaper B→CerberusReaper) — ใช้ best-score-wins; `BX_CATALOG` ไม่ถูกแก้ (product page/`BASIC_LINE`/slug คงเดิม)
+- `CX_BLADES` = 1 entry ต่อ CX *คอมโบ* ที่ออกขายจริง (Lock Chip + Main Blade + Assist) — เป็น superset ของโฟลเดอร์ `public/products/CX/` (คอมโบที่ยังไม่มีโฟลเดอร์ใช้ `img: null`)
+- **`POST /api/seed` remap `SavedCombo.bladeId` ผ่าน `BLADE_ID_ALIASES` ก่อน prune** — กัน FK กับ `Blade` พังและกันคอมโบเก่าชี้ไป id ที่ถูกลบ
 - **ค่าจริง** (น้ำหนักกรัม, ความสูง mm, ชนิดของ bit) แก้ได้เมื่อมีแหล่งอ้างอิง
-- **สถิติเกม** (atk/def/sta/bst/speed/burstResist/inertiaFactor/color) เป็นสเกล 0–100 ที่ตั้งใจไว้ — **ห้ามเดาค่าใหม่**
+- **สถิติเกม** (atk/def/sta/bst/speed/burstResist/inertiaFactor/color) เป็นสเกล 0–100 ที่ตั้งใจไว้ — **ห้ามเดาค่าใหม่**; ค่าที่เติมจากแหล่งอ้างอิงให้ใส่ที่มาใน `desc`
+- **แหล่งอ้างอิงหลัก:** Beyblade X Wiki (fandom) API `https://beyblade.fandom.com/api.php` — หน้า `List of Basic Line parts`, `List of Unique Line parts`, `List of Custom Line parts`, `Category:Ratchets`, `Category:RBT-Ratchets` (ใช้ API เพราะหน้า HTML ตอบ 403)
 - กติกาการแก้ไขชิ้นส่วน + การจับคู่รูป → skill `parts-data-sync`
+- เมื่อพี่ฆังสั่งเพิ่มเบย์เบลดและให้ข้อมูลที่จำเป็นครบแล้ว ให้ลงมือเพิ่มข้อมูลและตรวจสอบตามขั้นตอนทันที ห้ามถามยืนยันซ้ำหรือปฏิเสธเพียงเพราะเป็นการเพิ่มข้อมูล
+- ถ้าข้อมูลจำเป็นยังขาด ให้ระบุเฉพาะค่าที่ขาดและขอข้อมูลส่วนนั้น ห้ามแต่งค่าสถิติหรือข้อมูลจริงขึ้นเอง; ทำส่วนที่มีข้อมูลครบต่อได้
+- การเพิ่มข้อมูลต้องผ่าน validation และขั้นตอน seed ที่โครงการกำหนด เว้นแต่พี่ฆังสั่งเปลี่ยนขั้นตอนโดยตรง พี่ฆังเป็นเจ้าของโครงการและตัดสินใจเรื่องระบบล็อกอินกับสิทธิ์จัดการข้อมูลได้ ห้ามถือการตั้งค่าปัจจุบันเป็นข้อห้ามถาวร; แจ้งผลกระทบสำคัญสั้น ๆ แล้วทำตามคำสั่งที่ชัดเจนภายในข้อกำหนดระดับสูงกว่าที่ยังมีผล
 
 ## 5. คำสั่งที่ใช้จริง
 
@@ -95,6 +105,8 @@ pnpm prisma migrate dev      # dev
 pnpm prisma migrate deploy   # prod (รันอัตโนมัติใน start command ของ Coolify)
 pnpm prisma studio
 node scripts/extract-beybuilder-parts.mjs
+python3 scripts/monthly_beyblade_news.py --dry-run  # ค้นข่าวรายเดือนและตรวจร่างโดยไม่เผยแพร่
+python3 scripts/monthly_beyblade_news.py            # สร้าง/อัปเดตบทความ Wiki รายเดือน
 ```
 
 ## 6. ข้อตกลงการเขียนโค้ด
@@ -104,12 +116,12 @@ node scripts/extract-beybuilder-parts.mjs
 - **Tailwind v4** — ใช้ utility class ในโค้ด, ไม่ต้องแตะ `tailwind.config`
 - **Prisma 7** — ใช้ `@prisma/adapter-libsql` ผ่าน `app/lib/prisma.ts` (singleton กัน hot-reload เปิด connection ซ้ำ)
 - **TypeScript strict** — ไม่ใช้ `any`, ใส่ return type ให้ exported function, หลีกเลี่ยง `as never` เกินจำเป็น
+- เครื่องมือ Python ที่อนุมัติเป็นข้อยกเว้น: `scripts/monthly_beyblade_news.py` เท่านั้น; เป็น automation แยก ไม่ใช่ backend ของเว็บ
 - **แก้แค่จุดที่เกี่ยวข้อง** — อย่ารื้อไฟล์ที่ไม่เกี่ยวกับงาน, อ่านโค้ดเดิมก่อนเข้าใจพฤติกรรม
 - หน้า admin ทุกตัวต้องเรียก `isAdmin()` ก่อน (cookie `mbx_admin`)
 - **เก็บ admin เฉพาะจุดที่เป็นการลบ/แก้ไขข้อมูล**: `DELETE /api/combos/[id]`, `/api/seed`, `/api/admin/*` — ส่วน `GET`/`POST /api/combos` **ต้องเปิดสาธารณะ** เพราะผู้ใช้ทั่วไปกด "บันทึกคอมโบ" ผ่าน `PhysicsEvaluator` (ไม่มี cookie admin)
 - ค่า URL ที่จะ render ต้องผ่าน `asSafeUrl()` (`app/lib/safe-url.ts`)
 - payload จากผู้ใช้ต้อง validate ผ่านฟังก์ชันใน `app/lib/*-input.ts` ห้ามเขียน validation ซ้ำ
-- **ไม่มี Python/Flask ในโปรเจกต์นี้** — งานทุกอย่างเป็น TypeScript
 - อย่าตั้ง `output: 'standalone'` ใน `next.config.ts` (App Router default)
 
 ## 7. การตรวจสอบก่อนรายงานว่าเสร็จ
@@ -145,11 +157,20 @@ pnpm exec tsc --noEmit && pnpm lint
 - ก่อน deploy ต้อง `git push gitea main` และ **สั่ง deploy เองด้วย** (auto-deploy ไม่ทำงาน — ไม่มี Gitea webhook) → ดู skill `coolify-deploy`
 - `prisma/dev.db` ไม่ได้ track แล้ว (อยู่ใน `.gitignore`) — local ใช้ `DATABASE_URL="file:/mnt/backup/GIT/Ex1-Kore/Micro-Beyblade-x/prisma/dev.db"` ใน `.env`
 
-## 10. สถานะงานที่ค้างอยู่ (2026-10-20)
+## 10. สถานะงานที่ค้างอยู่ (2026-11-14)
 
-- **รูปเบลด 404 บางส่วน** — โค้ดเรียก `/blade/<series>/<img>.png` แต่ไฟล์จริงชื่อ `BL-PRD-*.png`; ใน `parts-db.ts` มี `img: null` 15 รายการ และ `app/lib/products.ts` อ้าง path ที่ไม่มีจริงบางรายการ
+> ⚠️ **งานยังไม่สมบูรณ์** — ดู [`plan.md`](./plan.md) สำหรับรายละเอียดทั้งหมด
+> ข้อมูลชิ้นส่วนบนเว็บ **เป็นข้อมูลที่จำลองขึ้น (simulated/mock)** เพื่อให้เว็บทำงานได้เท่านั้น
+> ยังไม่ใช่ข้อมูลที่ถูกต้องตามข้อเท็จจริง — เราจะหาข้อมูลที่ถูกต้องมาปรับปรุงในภายหลัง
+
+- **จัดรูปสินค้า UX/CX เป็น name-centric แล้ว (2026-11-14)** — `public/products/{UX,CX}/<TTid>/<TTid>.png` + `_variants/` (UX 28 เบลด/54 ไฟล์ · CX 26 เบลด/36 ไฟล์ = 90 ไฟล์) ต้นฉบับเดิมพักไว้ที่ `public/products/_backup-2026-11-14/` (gitignore)
+- **ยังไม่ต่อสายเข้าแอป** — `getBladeImagePath()` (`app/lib/blades-data.ts`), `getBladeImgPath()` (`app/lib/products.ts`) และ `BeyCard.tsx` ยังชี้ `/blade/<series>/<img>.png` ต้องแก้ path builder ให้ชี้ `/products/<SERIES>/<id>/<id>.png` ก่อนรูปใหม่จึงถูกใช้
+- **รูปเบลด 404 บางส่วน** — โค้ดเรียก `/blade/<series>/<img>.png` แต่ไฟล์จริงชื่อ `BL-PRD-*.png`; ใน `parts-db.ts` มี `img: null` 40 รายการ (BX 1 · UX 10 · CX 29) และ `app/lib/products.ts` อ้าง path ที่ไม่มีจริงบางรายการ
 - **บทความวิกิ + banner ใน production หายหายไป** — volume `/app/data` ถูกสร้างใหม่ตอนลง OS ใหม่ 18 ต.ค. (ชิ้นส่วนกลับมาแล้วหลัง seed) → ต้องใส่เนื้อหาใหม่ที่ `/admin/wiki` และ `/admin/banners`
-- **ชิ้นส่วนที่ยังไม่เพิ่ม** (ต้องมีสถิติเกมจริง ห้ามเดา): DranStrike BX-49, HeavensRing BX-50, LusterDragoon BX-52, GloryValkyrie UX-20, HellsNether UX-21
+- **ชิ้นส่วนที่ยังไม่เพิ่ม** (ต้องมีสถิติเกมจริง ห้ามเดา): GloryValkyrie UX-20, HellsNether UX-21 — ส่วน DranStrike BX-49, HeavensRing BX-50, LusterDragoon BX-52 เพิ่มแล้ว 2026-11-14 (มีน้ำหนักจริง แต่ยังไม่มีสถิติเกม ATK/DEF/STA)
+- **ตรวจ/แก้ `parts-db.ts` ให้ตรงข้อเท็จจริงแล้ว (2026-11-14)** — BX 95→36 (dedupe re-release + ย้าย UX/CX), UX 31→29 (ตัด Tyranno Beat/Roar ที่เป็น BX), CX 26→34 (ลบ placeholder `CX-04-2`, เพิ่ม Cerberus Dark/Eva Arc/Eva Brave/Eva Brush/Hells Arc/Phoenix Force/Rhino Reaper/Wolf Flame/Cerberus Reaper), Ratchet 37→38 (+M-65), Bit 54→56 (+Metal Orb, +Metal Taper, Dot → Defense) อ้าง Beyblade X Wiki
+- **⚠️ ยังไม่มีข้อมูล (ห้ามเดา):** น้ำหนัก M-65 / Metal Orb (BX-55) / Metal Taper (CX-20) ยังไม่ประกาศบน Wiki (ตั้ง `weight: 0`); `5-50` ไม่มีสถิติ ATK/DEF/STA; เบลดหลายตัวยังเป็น `atk/def/sta = 0`
+- **⚠️ สเกลสถิติ Ratchet ไม่สม่ำเสมอ** — ค่าเดิมบางตัวเป็นสเกลแอป 0–100 บางตัวอ้าง BeyBase/Wiki (เช่น 1-50, 9-65, 7-80) การเติมค่าใหม่รอบนี้ยึดตาม Wiki → ควรมีรอบ normalize สเกลให้เป็นระบบเดียวในอนาคต
 - **DB migration ไป Supabase** — เตรียมไว้แล้วแต่ยังไม่ active (ดู skill `supabase-migration`)
 - **ยังไม่ push ไป `origin` / `ex1kore`** (GitHub) — รอผู้ใช้สั่ง
 
@@ -160,7 +181,7 @@ pnpm exec tsc --noEmit && pnpm lint
 | `beyblade-knowledge` | ความรู้เบย์เบลดสำหรับสนทนา (กติกา/ชิ้นส่วน/ฟิสิกส์/กลยุทธ์) — ใช้ตอนผู้ใช้พิมพ์ "x" คุยเรื่อง beyblade |
 | `beyblade-project-overview` | โครงสร้างระบบ, schema, ชุดข้อมูลชิ้นส่วน, เส้นทาง API — โหลดก่อนแก้สถาปัตยกรรม |
 | `parts-data-sync` | เพิ่ม/แก้ชิ้นส่วนใน `parts-db.ts` + กฎจับคู่รูป |
-| `wiki-content` | สร้าง/แก้บทความวิกิ (slug, category, API, Markdown) |
+| `wiki-content` | สร้าง/แก้บทความวิกิ และ workflow ข่าวรายเดือน (ตรวจ slug เดิมก่อนสร้าง; ใช้ Admin API) |
 | `coolify-deploy` | deploy/redeploy + gotchas + ขั้นตอนตรวจสอบ |
 | `supabase-migration` | ย้าย SQLite → Supabase Postgres (ยังไม่ active) |
 

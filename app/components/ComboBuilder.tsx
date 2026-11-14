@@ -170,7 +170,7 @@ export default function ComboBuilder({
                         ))}
                     </select>
                     <div className="flex justify-between text-xs text-slate-400 px-2 py-2 bg-slate-950/30 rounded-lg border border-slate-800/50">
-                        <span>สปริงล็อก: <strong className="text-slate-200">{selectedBit.bst >= 15 ? 'แน่นพิเศษ (High)' : 'ปกติ (Normal)'}</strong></span>
+                        <span>สปริงล็อก: <strong className="text-slate-200">{selectedBit.burstResist >= 2 ? 'แน่นพิเศษ (High)' : 'ปกติ (Normal)'}</strong></span>
                         <span>สายหลัก: <strong className="text-slate-200">{selectedBit.type}</strong></span>
                     </div>
                 </div>

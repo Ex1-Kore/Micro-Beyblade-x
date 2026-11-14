@@ -37,7 +37,6 @@ model Ratchet {
   atk     Int
   def     Int
   sta     Int
-  bst     Int
   desc    String
 
   savedCombos SavedCombo[]
@@ -52,7 +51,6 @@ model Bit {
   atk          Int
   def          Int
   sta          Int
-  bst          Int
   burstResist  Int
   desc         String
 

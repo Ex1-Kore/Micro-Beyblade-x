@@ -108,7 +108,7 @@ Angular Momentum (L) = ความ "ดื้อ" ในการหมุน �
 
 | แหล่ง | มีอะไร |
 | --- | --- |
-| `app/lib/parts-db.ts` | ชิ้นส่วนครบ 159 รายการ (BX 39 · UX 23 · CX 3 · Sub 3 · Ratchet 37 · Bit 54) พร้อมน้ำหนัก/สถิติ/desc |
+| `app/lib/parts-db.ts` | ชิ้นส่วนครบ 196 รายการ (BX 36 · UX 29 · CX 34 · Sub 3 · Ratchet 38 · Bit 56) พร้อมน้ำหนัก/สถิติ/desc — อ้าง Beyblade X Wiki |
 | `app/lib/physics.ts` | สูตรฟิสิกส์ฉบับเต็ม + ค่าคงที่ |
 | `app/wiki/mechanics/page.tsx` | ตารางสูตร + ตัวอย่างคำนวณ + burst risk |
 | `app/wiki/system/page.tsx` | ระบบเกม + ตาราง BX/UX/CX |

@@ -41,7 +41,6 @@ export interface RatchetPart {
     atk: number;
     def: number;
     sta: number;
-    bst: number;
     desc: string;
     /** ชื่อไฟล์รูปใน /public/products/RATCHETS/<img>.png — null = ยังไม่มีรูป */
     img?: string | null;
@@ -56,8 +55,7 @@ export interface BitPart {
     atk: number;
     def: number;
     sta: number;
-    bst: number;
-    /** ค่าต้านทาน Burst (1-5) ใช้ในสูตร physics risk score */
+    /** ค่าต้านทาน Burst (1-5) ใช้ในสูตร physics risk score — ค่าจริงจากกล่อง/Wiki (ต้านทานระเบิด) */
     burstResist: number;
     /** ชื่อไฟล์รูปใน /public/products/BITS/<img>.png — null = ยังไม่มีรูป */
     img?: string | null;

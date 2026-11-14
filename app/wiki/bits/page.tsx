@@ -19,7 +19,6 @@ interface BitEntry {
     atk: number;
     def: number;
     sta: number;
-    bst: number;
     burstResist: number;
 }
 
@@ -38,7 +37,6 @@ const BITS: BitEntry[] = PARTS_DB.bits.filter((b: BitPart): b is BitPart & { img
         atk: b.atk,
         def: b.def,
         sta: b.sta,
-        bst: b.bst,
         burstResist: b.burstResist,
     };
 });
@@ -96,7 +94,6 @@ function bitProfile(bit: BitEntry): { pros: string[]; cons: string[] } {
     if (bit.atk >= 25) pros.push('พลังโจมตีสูง เหมาะกับการทำ Finish');
     if (bit.def >= 30) pros.push('กันกระแทกได้ดี ตั้งรับแน่น');
     if (bit.sta >= 30) pros.push('หมุนได้นาน เหมาะกับเกมยืดเยื้อ');
-    if (bit.bst >= 14) pros.push('ค่าสมดุลโดยรวมสูง');
     if (bit.burstResist >= 3) pros.push('ทนทานต่อการ Burst');
 
     if (bit.speed < 30) cons.push('ความเร็วต่ำ ตามเกมรุกของคู่แข่งได้ยาก');
@@ -105,7 +102,6 @@ function bitProfile(bit: BitEntry): { pros: string[]; cons: string[] } {
     if (bit.def < 15) cons.push('รับแรงชนได้จำกัด');
     if (bit.sta < 15) cons.push('พลังการหมุนหมดไว');
     if (bit.burstResist <= 1) cons.push('กัน Burst ได้น้อย');
-    if (bit.bst < 10) cons.push('ภาพรวมยังไม่โดดเด่น');
 
     if (pros.length < 2) pros.push(bit.weight <= 2.2 ? 'น้ำหนักเบา ช่วยให้แกนหมุนคล่องตัว' : 'น้ำหนักช่วยเพิ่มแรงเฉื่อยในการหมุน');
     if (cons.length < 2) cons.push(bit.weight <= 2.2 ? 'น้ำหนักเบา จึงถูกชนเคลื่อนที่ได้ง่าย' : 'น้ำหนักมาก อาจออกตัวช้ากว่า');
@@ -253,7 +249,6 @@ function BitDetail({ bit, onClose }: { bit: BitEntry; onClose: () => void }) {
                                 <StatBar label="ATK" value={bit.atk} color="bg-rose-500" />
                                 <StatBar label="DEF" value={bit.def} color="bg-blue-500" />
                                 <StatBar label="STA" value={bit.sta} color="bg-emerald-500" />
-                                <StatBar label="BST" value={bit.bst} color="bg-violet-500" />
                             </div>
                         </div>
 

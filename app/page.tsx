@@ -86,7 +86,7 @@ export default function App() {
         let defense = selectedBlade.def + selectedRatchet.def + selectedBit.def;
         let stamina = selectedBlade.sta + selectedRatchet.sta + selectedBit.sta;
         let speed = selectedBit.speed;
-        let burstResist = selectedRatchet.bst + selectedBit.bst;
+        let burstResist = selectedBit.burstResist * 33; // ค่าจริงจากกล่อง (1-3) → สเกล 0-100 สำหรับแสดงผล
 
         if (system === 'CX' && selectedSubBlade) {
             totalWeight += selectedSubBlade.weight;
@@ -100,7 +100,7 @@ export default function App() {
         defense = Math.min(99, Math.max(10, defense));
         stamina = Math.min(99, Math.max(10, stamina));
         speed = Math.min(100, Math.max(10, speed));
-        burstResist = Math.min(99, Math.max(10, burstResist * 2.8));
+        burstResist = Math.min(99, Math.max(10, burstResist));
 
         let primaryType = selectedBit.type;
         if (attack > defense + 25 && attack > stamina + 25) primaryType = 'Attack';
